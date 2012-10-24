@@ -1,0 +1,9 @@
+CONTRIBUTING.md
+HISTORY.rdoc
+LICENSE
+Manifest.txt
+README.rdoc
+Rakefile
+lib/kjess.rb
+spec/spec_helper.rb
+spec/version_spec.rb
