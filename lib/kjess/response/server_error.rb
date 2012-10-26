@@ -4,7 +4,7 @@ class KJess::Response
     arity    1
 
     def message
-      args.first
+      args.join(' ')
     end
   end
 end
