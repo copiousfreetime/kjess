@@ -12,4 +12,6 @@ module KJess
     end
   end
 end
+require 'kjess/response'
+require 'kjess/request/set'
 require 'kjess/request/version'
