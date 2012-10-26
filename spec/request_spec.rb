@@ -23,4 +23,8 @@ describe KJess::Response do
     r = KJess::Spec::TestRequest.new( :foo => 'that' )
     r.to_protocol.must_equal "TEST that\r\n"
   end
+
+  it "registers child classes" do
+    KJess::Request.registry['TEST'].must_equal KJess::Spec::TestRequest
+  end
 end

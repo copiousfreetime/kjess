@@ -8,3 +8,7 @@ gem 'minitest'
 require 'minitest/autorun'
 require 'minitest/pride'
 require 'kjess'
+
+# namespace for spec classes
+module KJess::Spec
+end
