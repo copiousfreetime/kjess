@@ -6,6 +6,19 @@ module KJess
     def self.registry
       Registry
     end
+
+    def self.parse( str )
+      keyword, *args = str.strip.split
+      $stderr.puts "keyword: #{keyword} args: #{args.inspect}"
+      klass = Registry.fetch( keyword, KJess::Response::Unknown )
+      klass.new( args )
+    end
+
+    def parse_options_to_args( opts )
+      [ opts ].flatten
+    end
+
+    def read_more( connection ); end
   end
 end
 
@@ -17,5 +30,6 @@ require 'kjess/response/not_found'
 require 'kjess/response/not_stored'
 require 'kjess/response/server_error'
 require 'kjess/response/stored'
+require 'kjess/response/unknown'
 require 'kjess/response/value'
 require 'kjess/response/version'

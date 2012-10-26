@@ -67,19 +67,24 @@ module KJess
       @socket = nil
     end
 
-    def write(  buf )
-      socket.write(buf + CRLF )
+    def write( msg )
+      $stderr.write "--> #{msg}"
+      socket.write( msg )
     end
 
-    def readline
-      socket.readline( CRLF )
+    def readline( eom = Protocol::CRLF )
+      line = socket.readline( eom )
+      $stderr.write "<-- #{line}"
+      return line
     rescue EOFError
       close
       return "EOF"
     end
 
     def read( *args )
-      socket.read( *args )
+      d = socket.read( *args )
+      $stderr.puts "<-- #{d}"
+      return d
     end
   end
 end

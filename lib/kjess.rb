@@ -3,6 +3,7 @@ module KJess
 end
 
 require 'kjess/connection'
+require 'kjess/client'
 require 'kjess/errors'
 
 require 'kjess/protocol'
