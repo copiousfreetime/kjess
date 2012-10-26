@@ -7,8 +7,8 @@ class KJess::Request
     attr_reader :data
 
     def parse_options_to_args( opts )
-      @data = opts[:data]
-      [ opts[:queue], 0, opts[:expiration] || 0 , data.bytesize ]
+      @data = opts[:data].to_s
+      [ opts[:queue_name], 0, opts[:expiration] || 0 , data.bytesize ]
     end
 
     def to_protocol
