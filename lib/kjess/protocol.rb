@@ -1,7 +1,7 @@
 module KJess
   class Protocol
 
-    CRFL = "\r\n"
+    CRLF = "\r\n"
 
     class << self
       def keyword( name = nil )
@@ -33,7 +33,7 @@ module KJess
     def to_protocol
       s = keyword
       s += " #{args.join(' ')}" unless args.empty?
-      s += CRFL
+      s += CRLF
     end
 
     def keyword
