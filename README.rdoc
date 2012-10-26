@@ -7,7 +7,7 @@
 == DESCRIPTION
 
 KJess is a pure ruby Kestrel client that supports Kestrel's Memcache style
-protocol
+protocol.
 
 == FEATURES
 
