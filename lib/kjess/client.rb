@@ -91,6 +91,16 @@ module KJess
       get( queue_name, :abort => true )
     end
 
+    # Public : Remove a queue from the kestrel server
+    #
+    # queue_name - the name of the queue to remove
+    #
+    # Returns true if it was deleted false otherwise
+    def delete( queue_name )
+      d = KJess::Request::Delete.new( :queue_name => queue_name )
+      send_recv( d )
+    end
+
     def send_recv( request )
       connection.write( request.to_protocol )
       line = connection.readline

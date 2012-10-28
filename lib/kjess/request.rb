@@ -13,6 +13,7 @@ module KJess
   end
 end
 require 'kjess/response'
+require 'kjess/request/delete'
 require 'kjess/request/get'
 require 'kjess/request/set'
 require 'kjess/request/version'
