@@ -127,6 +127,10 @@ module KJess
       return h
     end
 
+    def shutdown
+      send_recv( KJess::Request::Shutdown.new )
+    end
+
     def send_recv( request )
       connection.write( request.to_protocol )
       line = connection.readline
