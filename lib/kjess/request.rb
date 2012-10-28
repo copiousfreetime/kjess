@@ -13,6 +13,8 @@ module KJess
   end
 end
 require 'kjess/response'
+require 'kjess/request/flush'
+require 'kjess/request/flush_all'
 require 'kjess/request/delete'
 require 'kjess/request/get'
 require 'kjess/request/set'

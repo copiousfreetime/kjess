@@ -101,6 +101,15 @@ module KJess
       send_recv( d )
     end
 
+    def flush( queue_name )
+      d = KJess::Request::Flush.new( :queue_name => queue_name )
+      send_recv( d )
+    end
+
+    def flush_all
+      send_recv( KJess::Request::FlushAll.new )
+    end
+
     def send_recv( request )
       connection.write( request.to_protocol )
       line = connection.readline
