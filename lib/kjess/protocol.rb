@@ -23,8 +23,10 @@ module KJess
     end
 
     attr_reader :args
+    attr_reader :raw_args
 
     def initialize( opts = {} )
+      @raw_args = opts
       @args = parse_options_to_args( opts ) || []
     end
 
