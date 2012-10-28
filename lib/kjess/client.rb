@@ -110,6 +110,10 @@ module KJess
       send_recv( KJess::Request::FlushAll.new )
     end
 
+    def quit
+      send_recv( KJess::Request::Quit.new )
+    end
+
     # using a combination of stats and dump_stats for ease of parsing
     def stats
       stats = send_recv( KJess::Request::Stats.new )
