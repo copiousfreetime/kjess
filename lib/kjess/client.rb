@@ -118,6 +118,10 @@ module KJess
       send_recv( KJess::Request::Quit.new )
     end
 
+    def status( update_to = nil )
+      send_recv( KJess::Request::Status.new( update_to ) )
+    end
+
     # using a combination of stats and dump_stats for ease of parsing
     def stats
       stats = send_recv( KJess::Request::Stats.new )
