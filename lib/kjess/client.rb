@@ -110,6 +110,10 @@ module KJess
       send_recv( KJess::Request::FlushAll.new )
     end
 
+    def reload
+      send_recv( KJess::Request::Reload.new )
+    end
+
     def quit
       send_recv( KJess::Request::Quit.new )
     end
