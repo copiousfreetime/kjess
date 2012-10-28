@@ -38,7 +38,7 @@ module KJess
       v = KJess::Request::Version.new
       r = send_recv( v )
       return r.version if Response::Version === r
-      raise Response::Error, r
+      raise "WTF"
     end
 
     # Public: Add an item to the given queue
