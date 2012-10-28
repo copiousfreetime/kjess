@@ -110,6 +110,15 @@ module KJess
       send_recv( KJess::Request::FlushAll.new )
     end
 
+    # using a combination of stats and dump_stats for ease of parsing
+    def stats
+      stats = send_recv( KJess::Request::Stats.new )
+      dump_stats = send_recv( KJess::Request::DumpStats.new )
+      h = stats.data
+      h['queues'] = dump_stats.data
+      return h
+    end
+
     def send_recv( request )
       connection.write( request.to_protocol )
       line = connection.readline

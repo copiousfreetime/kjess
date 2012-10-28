@@ -18,18 +18,25 @@ module KJess
       [ opts ].flatten
     end
 
+    def message
+      [ keyword, raw_args ].flatten.join(' ')
+    end
+
     def read_more( connection ); end
   end
 end
 
 require 'kjess/response/client_error'
 require 'kjess/response/deleted'
+require 'kjess/response/dumped_stats'
 require 'kjess/response/end'
 require 'kjess/response/error'
+require 'kjess/response/flushed_all_queues'
 require 'kjess/response/not_found'
 require 'kjess/response/not_stored'
 require 'kjess/response/server_error'
 require 'kjess/response/stored'
+require 'kjess/response/stats'
 require 'kjess/response/unknown'
 require 'kjess/response/value'
 require 'kjess/response/version'
