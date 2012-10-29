@@ -141,6 +141,13 @@ module KJess
       return h
     end
 
+    # Public: Return just the stats about a particular queue
+    #
+    # Returns a Hash
+    def queue_stats( queue_name )
+      stats['queues'][queue_name]
+    end
+
     def shutdown
       send_recv( KJess::Request::Shutdown.new )
     end
