@@ -200,6 +200,7 @@ This.gemspec['ruby'] = Gem::Specification.new do |spec|
   spec.add_development_dependency( 'rake'     , '~> 0.9.2.2')
   spec.add_development_dependency( 'minitest' , '~> 3.3.0' )
   spec.add_development_dependency( 'rdoc'     , '~> 3.12'   )
+  spec.add_development_dependency( 'zip'      , "~> 2.0.2"  )
 end
 
 
@@ -256,6 +257,11 @@ task :release => [ :release_check, 'manifest:check', :gem ] do
 end
 
 #------------------------------------------------------------------------------
+# Load the extra rake tasks
+#------------------------------------------------------------------------------
+load 'tasks/kestrel.rake'
+
+#------------------------------------------------------------------------------
 # Rakefile Support - This is all the guts and utility methods that are
 #                    necessary to support the above tasks.
 #
@@ -298,6 +304,10 @@ BEGIN {
 
     def self.task_warning( task )
       warn "WARNING: '#{task}' tasks are not defined. Please run 'rake develop'"
+    end
+
+    def self.project_root
+      File.expand_path( File.dirname(__FILE__) )
     end
 
     def self.read_manifest
