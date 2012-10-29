@@ -14,15 +14,10 @@ class KJess::Response
       queue_line_re = /\Aqueue\s+'(\w+)' \{\Z/
       stat_line_re  = /\A(\w+)=(\S+)\Z/
       stats         = Hash.new
-      stripped      = message.strip
+      line          = message.strip
+      current_queue = nil
 
-      if stripped.length > 0 then
-        md = queue_line_re.match( stripped )
-        current_queue = md.captures.first
-        stats[current_queue] = Hash.new
-      end
-
-      while line = connection.readline do
+      begin
         line.strip!
         if md = stat_line_re.match( line ) then
           stats[current_queue][md.captures[0]] = convert_value( md.captures[1] )
@@ -36,7 +31,7 @@ class KJess::Response
         else
           # do nothing -- empty line
         end
-      end
+      end while line = connection.readline
       @data = stats
     end
 
