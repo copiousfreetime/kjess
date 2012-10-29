@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+#require 'perftools'
 require 'kjess'
 require 'trollop'
 require 'hitimes'
@@ -59,7 +60,9 @@ class ClientTest
   end
 
   def run_test
-    send( options[:action] )
+#    PerfTools::CpuProfiler.start( "/tmp/#{options[:action]}_profile" ) do
+      send( options[:action] )
+#    end
   end
 end
 
