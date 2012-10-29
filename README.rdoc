@@ -11,7 +11,15 @@ protocol.
 
 == FEATURES
 
+A pure ruby native client to Kestrel.
+
 == Examples
+
+    client = Kestrel::Client.new( 'k.example.com' )
+    client.set( 'my_queue', 'item' )
+    i = client.reserve( 'my_queue' )
+    # do stuff with i
+    client.close( 'my_queue' )
 
 == ISC LICENSE
 
