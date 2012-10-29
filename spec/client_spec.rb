@@ -62,6 +62,13 @@ describe KJess::Client do
     it "returns nil if no item is found" do
       @client.get( 'get_q' ).must_be_nil
     end
+
+    it "waits for a period of time and then times out" do
+      t1 = Time.now.to_f
+      x = @client.get( 'get_q', :wait_for => 100 )
+      t2 = Time.now.to_f
+      (t2 - t1).must_be :>=, 0.1
+      x.must_be_nil
     end
 
     it "raises an error if peeking and aborting" do
