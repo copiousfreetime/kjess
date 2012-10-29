@@ -118,5 +118,11 @@ describe KJess::Client do
     end
   end
 
+  describe "#quit" do
+    it "disconnects from the server" do
+      @client.quit.must_equal true
+    end
+  end
+
 
 end

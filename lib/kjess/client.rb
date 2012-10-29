@@ -136,8 +136,12 @@ module KJess
       return KJess::Response::ReloadedConfig === resp
     end
 
+    # Public: Disconnect from the kestrel server.
+    #
+    # Returns true
     def quit
-      send_recv( KJess::Request::Quit.new )
+      resp = send_recv( KJess::Request::Quit.new )
+      return KJess::Response::Eof === resp
     end
 
     def status( update_to = nil )
