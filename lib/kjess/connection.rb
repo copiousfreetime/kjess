@@ -68,13 +68,15 @@ module KJess
     end
 
     def write( msg )
-      $stderr.write "--> #{msg}"
+      $stderr.write "--> #{msg}" if $DEBUG
       socket.write( msg )
     end
 
     def readline( eom = Protocol::CRLF )
-      line = socket.readline( eom )
-      $stderr.write "<-- #{line}"
+      while line = socket.readline( eom ) do
+        $stderr.write "<-- #{line}" if $DEBUG
+        break unless line.strip.length == 0
+      end
       return line
     rescue EOFError
       close
@@ -83,7 +85,7 @@ module KJess
 
     def read( *args )
       d = socket.read( *args )
-      $stderr.puts "<-- #{d}"
+      $stderr.puts "<-- #{d}" if $DEBUG
       return d
     end
   end

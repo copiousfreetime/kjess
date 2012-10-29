@@ -5,7 +5,6 @@ class KJess::Request
     valid_responses [ KJess::Response::Value ]
 
     def parse_options_to_args( opts )
-      puts "opts => #{opts.inspect}"
       a = [ opts[:queue_name] ]
 
       a << "t=#{opts[:wait_for]}" if opts[:wait_for]

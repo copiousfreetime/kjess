@@ -9,7 +9,6 @@ module KJess
 
     def self.parse( str )
       keyword, *args = str.strip.split
-      $stderr.puts "keyword: #{keyword} args: #{args.inspect}"
       klass = Registry.fetch( keyword, KJess::Response::Unknown )
       klass.new( args )
     end
