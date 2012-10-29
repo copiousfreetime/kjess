@@ -144,8 +144,16 @@ module KJess
       return KJess::Response::Eof === resp
     end
 
+    # Public: Return the server status.
+    #
+    # Currently this is only supported in the HEAD versin of kestrel. Version
+    # where this is not available will raise ServerError.
+    #
+    # Returns a String.
     def status( update_to = nil )
-      send_recv( KJess::Request::Status.new( update_to ) )
+      resp = send_recv( KJess::Request::Status.new( update_to ) )
+      raise KJess::Error, "Status command is not supported" if KJess::Response::ClientError === resp
+      return resp.message
     end
 
     # Public: Return stats about the Kestrel server

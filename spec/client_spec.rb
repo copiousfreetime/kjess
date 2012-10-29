@@ -124,5 +124,9 @@ describe KJess::Client do
     end
   end
 
-
+  describe "#status" do
+    it "returns the server status" do
+      lambda { @client.status }.must_raise KJess::Error
+    end
+  end
 end
