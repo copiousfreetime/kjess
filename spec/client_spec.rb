@@ -57,6 +57,16 @@ describe KJess::Client do
     # end
   end
 
+  describe "#get" do
+    it "retrieves a item from queue" do
+      @client.set( 'get_q' , "a get item" )
+      @client.get( 'get_q' ).must_equal 'a get item'
+    end
+
+    it "returns nil if no item is found" do
+      @client.get( 'get_q' ).must_equal nil
+    end
+  end
   describe  "#peek" do
     it "looks at a job at the front and does not remove it" do
       @client.stats['curr_items'].must_equal 0
