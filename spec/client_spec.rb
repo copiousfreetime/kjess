@@ -99,6 +99,26 @@ describe KJess::Client do
       @client.queue_stats( 'close_q' )['open_transactions'].must_equal 0
     end
   end
+
+  describe "#abort" do
+    it "aborts a reserved item" do
+      @client.set( 'abort_q', 'abort item 1' )
+      q_stats = @client.queue_stats('abort_q')
+      q_stats['items'].must_equal 1
+
+      i1 = @client.reserve( 'abort_q' )
+      q_stats = @client.queue_stats('abort_q')
+      q_stats['open_transactions'].must_equal 1
+
+      i2 = @client.abort( 'abort_q' )
+      q_stats = @client.queue_stats('abort_q')
+      q_stats['open_transactions'].must_equal 0
+      q_stats['items'].must_equal 1
+
+      i2.must_equal nil
+    end
+  end
+
   describe  "#peek" do
     it "looks at a job at the front and does not remove it" do
       @client.stats['curr_items'].must_equal 0
