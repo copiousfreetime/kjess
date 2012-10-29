@@ -40,20 +40,22 @@ describe KJess::Client do
 
 
   describe "#set" do
-    it "adds a job to the server" do
+    it "adds a item to the server" do
       @client.stats['curr_items'].must_equal 0
       @client.set( 'set_q', "setspec" )
       @client.stats['curr_items'].must_equal 1
     end
 
-    # it "a job with an expiration expires" do
+    # it "a item with an expiration expires" do
       # @client.stats['curr_items'].must_equal 0
-      # @client.set( 'foo', "setspec",  1 )
+      # @client.set( 'set_q_2', "setspec",  1 )
       # @client.stats['curr_items'].must_equal 1
-      # sleep 1
-      # @client.set( 'foo', "setspec2" )
-      # @client.stats['curr_items'].must_equal 1
-      # @client.get( 'foo' ).must_equal 'setspec2'
+      # @client.set( 'set_q_2', "setspec2" )
+      # @client.stats['curr_items'].must_equal 2
+      # while s = @client.stats do
+        # break if s['curr_items'] == 1
+      # end
+      # @client.get( 'set_q_2' ).must_equal 'setspec2'
     # end
   end
 
@@ -139,11 +141,11 @@ describe KJess::Client do
   end
 
   describe  "#peek" do
-    it "looks at a job at the front and does not remove it" do
+    it "looks at a item at the front and does not remove it" do
       @client.stats['curr_items'].must_equal 0
-      r = @client.set( 'peek_q', "peekjob" )
+      r = @client.set( 'peek_q', "peekitem" )
       @client.stats['curr_items'].must_equal 1
-      @client.peek('peek_q').must_equal 'peekjob'
+      @client.peek('peek_q').must_equal 'peekitem'
       @client.stats['curr_items'].must_equal 1
     end
   end
