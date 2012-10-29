@@ -36,12 +36,22 @@ class KJess::Response
       @data = stats
     end
 
+    # Internal: conver the line from STATS to a valid key for the stats hash.
+    #
+    # key - the under_scored key
+    #
+    # returns the new key
     def convert_key( key )
       key_parts = key.split("_")
-      return nil if key_parts.first == "queue" and key_parts.size > 2 
+      return nil if key_parts.first == "queue" and key_parts.size > 2
       return key
     end
 
+    # Internal: convert the given value to the Integer, Float if it should be.
+    #
+    # value - the item to convert
+    #
+    # Returns a Float, Integer or the item itself
     def convert_value( value )
       if value =~ /\A\d+\Z/ then
         Float( value ).to_i

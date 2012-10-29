@@ -25,7 +25,7 @@ module KJess
       @socket = nil
     end
 
-    # Internal
+    # Internal: Return the raw socket that is connected to the Kestrel server
     #
     # Returns the raw socket. If the socket is not connected it will connect and
     # then return it.
@@ -36,10 +36,9 @@ module KJess
       return @socket = connect()
     end
 
-    # Internal
+    # Internal: Create the socket we use to talk to the Kestrel server
     #
-    # Create and initialize the internal Socket that is used to connect to the
-    # Kestrel Server.
+    # Returns a TCPSocket
     def connect
       sock = TCPSocket.new( host, port )
 
@@ -63,16 +62,29 @@ module KJess
       return sock
     end
 
+    # Internal: close the socket if it is not already closed
+    #
+    # Returns nothign
     def close
       @socket.close if @socket and not @socket.closed?
       @socket = nil
     end
 
+    # Internal: write the given item to the socket
+    #
+    # msg - the message to write
+    #
+    # Returns nothing
     def write( msg )
       $stderr.write "--> #{msg}" if $DEBUG
       socket.write( msg )
     end
 
+    # Internal: read a single line from the socket
+    #
+    # eom - the End Of Mesasge delimiter (default: "\r\n")
+    #
+    # Returns a String
     def readline( eom = Protocol::CRLF )
       while line = socket.readline( eom ) do
         $stderr.write "<-- #{line}" if $DEBUG
@@ -84,6 +96,11 @@ module KJess
       return "EOF"
     end
 
+    # Internal: Read from the socket
+    #
+    # args - this method takes the same arguments as IO#read
+    #
+    # Returns what IO#read returns
     def read( *args )
       d = socket.read( *args )
       $stderr.puts "<-- #{d}" if $DEBUG

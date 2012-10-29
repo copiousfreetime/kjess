@@ -1,4 +1,8 @@
 module KJess
+  # Request is the base Request Protocol. All Requests made to the Kestrel
+  # server are decendants of this class.
+  #
+  # The Request class holds the registry of all the Request decendent classes.
   class Request < Protocol
     Registry = Hash.new
 
