@@ -64,3 +64,4 @@ namespace :kestrel do
 end
 
 task :clean => 'kestrel:clean'
+task :test => KJess::Spec::KestrelServer.config_file
