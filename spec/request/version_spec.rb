@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe KJess::Request::Version do
+
   it "has a keyword" do
     KJess::Request::Version.keyword.must_equal "VERSION"
   end
@@ -13,5 +14,4 @@ describe KJess::Request::Version do
   it "has a valid response" do
     KJess::Request::Version.valid_responses.size.must_equal 1
   end
-
 end

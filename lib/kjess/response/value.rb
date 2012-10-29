@@ -17,7 +17,7 @@ class KJess::Response
     def read_more( connection )
       read_size  = bytes + CRLF.bytesize
       total_data = connection.read( read_size )
-      @data      = total_data[0..bytes]
+      @data      = total_data[0...bytes]
 
       line = connection.readline
       resp = KJess::Response.parse( line )
