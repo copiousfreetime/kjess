@@ -86,6 +86,20 @@ module KJess
       get( queue_name, opts )
     end
 
+    # Public: Reserve the next item on the queue and close out the previous
+    # read.
+    #
+    # This is a helper method to do a reliable read on a queue item while
+    # closing out the existing read at the same time.
+    #
+    # queue_name - the name of the quee to retieve and item from
+    # options    - Additional options
+    #              :wait_for - wait for this many ms for an item on the queue(default: 0)
+    def close_and_reserve( queue_name, opts = {} )
+      opts = opts.merge( :close => true )
+      reserve( queue_name, opts )
+    end
+
     # Public: Peek at the top item in the queue
     #
     # queue_name - the name of the queue to retrieve an item from

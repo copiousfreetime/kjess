@@ -77,6 +77,25 @@ describe KJess::Client do
     end
   end
 
+  describe "#close_and_reserve" do
+    it "reserves an item for reliable read and closes an existing read" do
+      @client.set( 'reserve_q', 'a reserve item 1' )
+      @client.set( 'reserve_q', 'a reserve item 2' )
+      @client.queue_stats( 'reserve_q' )['open_transactions'].must_equal 0
+
+      i1 = @client.reserve( 'reserve_q' )
+      i1.must_equal 'a reserve item 1'
+      @client.queue_stats( 'reserve_q' )['open_transactions'].must_equal 1
+
+      i2 = @client.close_and_reserve( 'reserve_q' )
+      i2.must_equal 'a reserve item 2'
+
+      q_stats = @client.queue_stats('reserve_q')
+      q_stats['open_transactions'].must_equal 1
+      q_stats['items'].must_equal 0
+    end
+  end
+
   describe "#close" do
     it "closes an existing read" do
       @client.set( 'close_q', 'close item 1' )
