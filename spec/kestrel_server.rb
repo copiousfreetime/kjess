@@ -91,30 +91,38 @@ _EOC
           puts cmd
           system( cmd )
           loop do
-            break if ping
+            break if is_running?
           end
           puts "Started."
         end
       end
 
+      def is_running?
+        return "pong" == ping
+      rescue Exception => e
+        false
+      end
+
+      def is_stopped?
+        return !is_running?
+      end
+
       def status
-        h = get_response( 'ping' )
-        puts "Running" if h['response'] == "pong"
+        puts "Running" if "pong" == ping
+      rescue Exception
+        puts "Stopped."
       end
 
       def stop
         shutdown
         loop do
-          break unless ping
+          break if is_stopped?
         end
         puts "Stopped."
       end
 
       def ping
-        h = get_response( 'ping' )
-        return h['response'] == "pong"
-      rescue => e
-        false
+        get_response('ping')['response']
       end
 
       def shutdown
