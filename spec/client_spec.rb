@@ -129,4 +129,10 @@ describe KJess::Client do
       lambda { @client.status }.must_raise KJess::Error
     end
   end
+
+  describe "#ping" do
+    it "knows if a server is up" do
+      @client.ping.must_equal true
+    end
+  end
 end

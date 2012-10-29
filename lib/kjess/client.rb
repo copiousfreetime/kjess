@@ -173,6 +173,19 @@ module KJess
       return h
     end
 
+    # Public: Returns true if the server is alive
+    #
+    # This uses the 'stats' method to see if the server is alive
+    #
+    # Returns true or fals
+    def ping
+      stats
+      true
+    rescue Errno::ECONNREFUSED => e
+      puts e
+      false
+    end
+
     # Public: Return just the stats about a particular queue
     #
     # Returns a Hash
@@ -180,6 +193,9 @@ module KJess
       stats['queues'][queue_name]
     end
 
+    # Public: Tells the Kestrel server to shutdown
+    #
+    # Returns nothing
     def shutdown
       send_recv( KJess::Request::Shutdown.new )
     end
