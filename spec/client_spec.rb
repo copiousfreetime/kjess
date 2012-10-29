@@ -63,6 +63,7 @@ describe KJess::Client do
       r = @client.set( 'peek_q', "peekjob" )
       @client.stats['curr_items'].must_equal 1
       @client.peek('peek_q').must_equal 'peekjob'
+      @client.stats['curr_items'].must_equal 1
     end
   end
 
