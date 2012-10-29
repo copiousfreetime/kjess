@@ -103,8 +103,9 @@ module KJess
     end
 
     def flush( queue_name )
-      d = KJess::Request::Flush.new( :queue_name => queue_name )
-      send_recv( d )
+      req  = KJess::Request::Flush.new( :queue_name => queue_name )
+      resp = send_recv( req )
+      return KJess::Response::End === resp
     end
 
     def flush_all

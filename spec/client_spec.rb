@@ -80,4 +80,19 @@ describe KJess::Client do
       @client.delete( 'delete_q_does_not_exist' ).must_equal true
     end
   end
+
+  describe "#flush" do
+    it "removes all the items from a queue" do
+      5.times { |x| @client.set( 'flush_q', "flush_me #{x}" ) }
+      @client.queue_stats( 'flush_q' )['items'].must_equal 5
+      @client.flush( 'flush_q' )
+      @client.queue_stats( 'flush_q' )['items'].must_equal 0
+    end
+
+    it "is fine with flushing a non-existant queue" do
+      @client.queue_stats( 'flush_q' ).must_equal nil
+      @client.flush( 'flush_q' ).must_equal true
+      @client.queue_stats( 'flush_q' ).must_equal nil
+    end
+  end
 end
