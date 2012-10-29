@@ -73,6 +73,19 @@ module KJess
       return nil
     end
 
+    # Public: Reserve the next item on the queue
+    #
+    # This is a helper method to get an item from a queue and open it for
+    # reliable read.
+    #
+    # queue_name - the name of the queue to retrieve an item from
+    # options    - Additional options
+    #              :wait_for - wait for this many ms for an item on the queue(default: 0)
+    def reserve( queue_name, opts = {} )
+      opts = opts.merge( :open => true )
+      get( queue_name, opts )
+    end
+
     # Public: Peek at the top item in the queue
     #
     # queue_name - the name of the queue to retrieve an item from

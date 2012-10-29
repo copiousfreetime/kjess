@@ -67,6 +67,16 @@ describe KJess::Client do
       @client.get( 'get_q' ).must_equal nil
     end
   end
+
+  describe "#reserve" do
+    it "reserves a item for reliable read" do
+      @client.set( 'reserve_q', 'a reserve item' )
+      @client.queue_stats( 'reserve_q' )['open_transactions'].must_equal 0
+      @client.reserve( 'reserve_q' ).must_equal 'a reserve item'
+      @client.queue_stats( 'reserve_q' )['open_transactions'].must_equal 1
+    end
+  end
+
   describe  "#peek" do
     it "looks at a job at the front and does not remove it" do
       @client.stats['curr_items'].must_equal 0
