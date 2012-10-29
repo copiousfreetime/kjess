@@ -122,13 +122,19 @@ module KJess
       send_recv( KJess::Request::Status.new( update_to ) )
     end
 
-    # using a combination of stats and dump_stats for ease of parsing
+    # Public: Return stats about the Kestrel server
+    #
+    # Using a combination of the STATS and DUMP_STATS commands this generates a
+    # good overview of all the most used stats for a Kestrel server.
+    #
+    # Returns a Hash
     def stats
-      stats      = send_recv( KJess::Request::Stats.new )
-      h          = stats.data
-      dump_stats = send_recv( KJess::Request::DumpStats.new )
+      stats       = send_recv( KJess::Request::Stats.new )
+      h           = stats.data
+      dump_stats  = send_recv( KJess::Request::DumpStats.new )
+      h['queues'] = Hash.new
       if KJess::Response::DumpedStats === dump_stats then
-        h['queues'] = dump_stats.data
+        h['queues'].merge!( dump_stats.data )
       end
       return h
     end

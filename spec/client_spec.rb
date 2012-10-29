@@ -32,6 +32,10 @@ describe KJess::Client do
       @client.set( 'stat_q_bar', 'stat_spec_bar' )
       @client.stats['queues'].keys.sort.must_equal %w[ stat_q_bar stat_q_foo ]
     end
+
+    it "has an empty queues hash when there are no queues" do
+      @client.stats['queues'].size.must_equal 0
+    end
   end
 
 
