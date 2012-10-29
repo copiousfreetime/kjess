@@ -60,7 +60,8 @@ describe KJess::Client do
     end
 
     it "returns nil if no item is found" do
-      @client.get( 'get_q' ).must_equal nil
+      @client.get( 'get_q' ).must_be_nil
+    end
     end
 
     it "raises an error if peeking and aborting" do
@@ -158,7 +159,7 @@ describe KJess::Client do
       q_stats['open_transactions'].must_equal 0
       q_stats['items'].must_equal 1
 
-      i2.must_equal nil
+      i2.must_be_nil
     end
   end
 
@@ -178,7 +179,7 @@ describe KJess::Client do
       @client.set( 'delete_q_1', 'delete me' )
       @client.queue_stats( 'delete_q_1' )['items'].must_equal 1
       @client.delete( 'delete_q_1' )
-      @client.queue_stats('delete_q_1').must_equal nil
+      @client.queue_stats('delete_q_1').must_be_nil
     end
 
     it "is okay to delete a queue that does not exist" do
@@ -195,9 +196,9 @@ describe KJess::Client do
     end
 
     it "is fine with flushing a non-existant queue" do
-      @client.queue_stats( 'flush_q' ).must_equal nil
+      @client.queue_stats( 'flush_q' ).must_be_nil
       @client.flush( 'flush_q' ).must_equal true
-      @client.queue_stats( 'flush_q' ).must_equal nil
+      @client.queue_stats( 'flush_q' ).must_be_nil
     end
   end
 
