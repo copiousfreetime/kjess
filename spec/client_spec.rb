@@ -66,4 +66,17 @@ describe KJess::Client do
     end
   end
 
+  describe "#delete" do
+    it "deletes a queue" do
+      @client.stats['queues'].size.must_equal 0
+      @client.set( 'delete_q_1', 'delete me' )
+      @client.stats['queues'].size.must_equal 1
+      @client.delete( 'delete_q_1' )
+      @client.stats['queues'].size.must_equal 0
+    end
+
+    it "is okay to delete a queue that does not exist" do
+      @client.delete( 'delete_q_does_not_exist' ).must_equal true
+    end
+  end
 end

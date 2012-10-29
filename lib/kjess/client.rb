@@ -97,8 +97,9 @@ module KJess
     #
     # Returns true if it was deleted false otherwise
     def delete( queue_name )
-      d = KJess::Request::Delete.new( :queue_name => queue_name )
-      send_recv( d )
+      req  = KJess::Request::Delete.new( :queue_name => queue_name )
+      resp = send_recv( req )
+      return KJess::Response::Deleted === resp
     end
 
     def flush( queue_name )
