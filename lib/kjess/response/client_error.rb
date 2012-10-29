@@ -1,3 +1,4 @@
+require 'kjess/error'
 class KJess::Response
   class ClientError < KJess::Response
     keyword 'CLIENT_ERROR'
@@ -5,6 +6,14 @@ class KJess::Response
 
     def message
       args.join(' ')
+    end
+
+    def error?
+      true
+    end
+
+    def exception
+      KJess::ClientError.new( message )
     end
   end
 end

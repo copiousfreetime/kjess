@@ -2,11 +2,12 @@ require 'fcntl'
 require 'socket'
 require 'resolv'
 require 'resolv-replace'
+require 'kjess/error'
 
 module KJess
   # Connection
   class Connection
-    class Error < StandardError; end
+    class Error < KJess::Error; end
 
     CRLF = "\r\n"
 

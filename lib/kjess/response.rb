@@ -22,6 +22,10 @@ module KJess
     end
 
     def read_more( connection ); end
+
+    def error?
+      false
+    end
   end
 end
 
