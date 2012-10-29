@@ -117,8 +117,12 @@ module KJess
       return KJess::Response::End === resp
     end
 
+    # Public: Remove all items from all queues on the kestrel server
+    #
+    # Returns true.
     def flush_all
-      send_recv( KJess::Request::FlushAll.new )
+      resp = send_recv( KJess::Request::FlushAll.new )
+      return KJess::Response::End === resp
     end
 
     def reload

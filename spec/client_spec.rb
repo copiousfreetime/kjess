@@ -95,4 +95,20 @@ describe KJess::Client do
       @client.queue_stats( 'flush_q' ).must_equal nil
     end
   end
+
+  describe "#flush_all" do
+    it "removes all items from all queues" do
+      @client.stats['curr_items'].must_equal 0
+      3.times do |qx|
+        4.times do |ix|
+          @client.set( "flush_all_queue_#{qx}", "item #{qx} #{ix}" )
+        end
+      end
+      @client.stats['queues'].size.must_equal 3
+      @client.stats['curr_items'].must_equal 12
+      @client.flush_all
+      @client.stats['curr_items'].must_equal 0
+      @client.stats['queues'].size.must_equal 3
+    end
+  end
 end
