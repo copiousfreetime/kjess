@@ -125,8 +125,15 @@ module KJess
       return KJess::Response::End === resp
     end
 
+    # Public: Have Kestrel reload its config.
+    #
+    # Currently the kestrel server will say that the config was reloaded no
+    # matter what so there is no way to determine if the config failed to load.
+    #
+    # Returns true
     def reload
-      send_recv( KJess::Request::Reload.new )
+      resp = send_recv( KJess::Request::Reload.new )
+      return KJess::Response::ReloadedConfig === resp
     end
 
     def quit

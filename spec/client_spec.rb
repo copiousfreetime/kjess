@@ -111,4 +111,12 @@ describe KJess::Client do
       @client.stats['queues'].size.must_equal 3
     end
   end
+
+  describe "#reload" do
+    it "tells kestrel to reload its config" do
+      @client.reload.must_equal true
+    end
+  end
+
+
 end
