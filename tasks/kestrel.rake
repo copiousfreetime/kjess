@@ -1,41 +1,26 @@
+load 'spec/kestrel_server.rb'
+
 namespace :kestrel do
 
-  def kestrel_version
-    ENV['VERSION'] || "2.3.4"
-  end
-
-  def kestrel_dir
-    File.join( Util.project_root, "kestrel/kestrel-#{kestrel_version}" )
-  end
-
-  def kestrel_zip
-    "#{kestrel_dir}.zip"
-  end
-
-  def kestrel_jar
-    File.join( kestrel_dir, "kestrel_2.9.1-#{kestrel_version}.jar" )
-  end
-
-
   directory 'kestrel'
-  file kestrel_zip => 'kestrel' do
+  file KJess::Spec::KestrelServer.zip => 'kestrel' do
     require 'uri'
     require 'net/http'
 
-    url = ::URI.parse("http://robey.github.com/kestrel/download/kestrel-#{kestrel_version}.zip")
+    url = ::URI.parse("http://robey.github.com/kestrel/download/kestrel-#{KJess::Spec::KestrelServer.erver.version}.zip")
 
-    puts "downloading #{url.to_s} to #{kestrel_zip} ..."
-    File.open( kestrel_zip, "wb+") do |f|
+    puts "downloading #{url.to_s} to #{KJess::Spec::KestrelServer.zip} ..."
+    File.open( KJess::Spec::KestrelServer.erver.zip, "wb+") do |f|
       res = Net::HTTP.get_response( url )
       f.write( res.body )
     end
   end
 
 
-  file kestrel_jar => kestrel_zip do
+  file KJess::Spec::KestrelServer.jar => KJess::Spec::KestrelServer.zip do
     require 'zip'
-    puts "extracting #{kestrel_zip}"
-    Zip::ZipFile.open( kestrel_zip ) do |zipfile|
+    puts "extracting #{KJess::Spec::KestrelServer.zip}"
+    Zip::ZipFile.open( KJess::Spec::KestrelServer.zip ) do |zipfile|
       zipfile.entries.each do |entry|
         next unless entry.file?
         dest_name = File.join('kestrel', entry.name.strip)
@@ -47,92 +32,34 @@ namespace :kestrel do
   end
 
   desc "Unpack kestrel to use for testing"
-  task :extract => kestrel_jar
+  task :extract => KJess::Spec::KestrelServer.jar
 
-  def kestrel_queue_path
-    File.join( kestrel_dir, 'data' )
-  end
+  directory KJess::Spec::KestrelServer.queue_path
+  directory KJess::Spec::KestrelServer.log_path
 
-  def kestrel_log_path
-    File.join( kestrel_dir, 'logs' )
-  end
-
-  def kestrel_log_file
-    File.join( kestrel_log_path, 'kestrel.log' )
-  end
-
-  def kestrel_config_file
-    File.join( kestrel_dir, 'config', 'kjess.scala' )
-  end
-
-  directory kestrel_queue_path
-  directory kestrel_log_path
-
-  file kestrel_config_file => [ kestrel_jar, kestrel_queue_path, kestrel_log_path ] do
-    File.open( kestrel_config_file, "w+" ) do |f|
-      contents = <<_EOC
-import com.twitter.conversions.storage._
-import com.twitter.conversions.time._
-import com.twitter.logging.config._
-import com.twitter.ostrich.admin.config._
-import net.lag.kestrel.config._
-
-new KestrelConfig {
-  listenAddress = "0.0.0.0"
-  memcacheListenPort = 22133
-  textListenPort = 2222
-  thriftListenPort = 2229
-
-  queuePath = "#{kestrel_queue_path}"
-
-  clientTimeout = 30.seconds
-
-  expirationTimerFrequency = 1.second
-
-  maxOpenTransactions = 100
-
-  // default queue settings:
-  default.defaultJournalSize = 16.megabytes
-  default.maxMemorySize = 128.megabytes
-  default.maxJournalSize = 1.gigabyte
-
-  admin.httpPort = 2223
-
-  admin.statsNodes = new StatsConfig {
-    reporters = new TimeSeriesCollectorConfig
-  }
-
-  loggers = new LoggerConfig {
-    level = Level.DEBUG
-    handlers = new FileHandlerConfig {
-      filename = "#{kestrel_log_file}"
-      roll = Policy.Never
-    }
-  }
-}
-_EOC
-      puts "Writing #{kestrel_config_file}"
-      f.write( contents )
+  file KJess::Spec::KestrelServer.config_file => [ KJess::Spec::KestrelServer.jar,
+                                                   KJess::Spec::KestrelServer.queue_path,
+                                                   KJess::Spec::KestrelServer.log_path ] do
+    File.open( KJess::Spec::KestrelServer.config_file, "w+" ) do |f|
+      puts "Writing #{KJess::Spec::KestrelServer.config_file}"
+      f.write( KJess::Spec::KestrelServer.config_contents )
     end
   end
 
-  task :start => kestrel_config_file do
-    Dir.chdir( kestrel_dir ) do 
-      cmd = "java -server -Xmx1024m -Dstage=kjess -jar #{kestrel_jar} &"
-      system( cmd )
-    end
+  task :start => KJess::Spec::KestrelServer.config_file do
+    KJess::Spec::KestrelServer.start
   end
 
-  task :stop => kestrel_config_file do
-    puts %x[ pkill -f #{kestrel_jar} ]
+  task :stop => KJess::Spec::KestrelServer.config_file do
+    KJess::Spec::KestrelServer.stop
   end
 
-  task :status => kestrel_config_file do
-    puts %x[ pgrep -lf #{kestrel_jar} ]
+  task :status => KJess::Spec::KestrelServer.config_file do
+    KJess::Spec::KestrelServer.status
   end
 
   task :clean do
-    FileUtils.rm_rf( kestrel_dir, :verbose => true )
+    FileUtils.rm_rf( KJess::Spec::KestrelServer.dir, :verbose => true )
   end
 end
 
