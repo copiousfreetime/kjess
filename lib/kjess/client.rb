@@ -95,6 +95,16 @@ module KJess
       get( queue_name, :peek => true )
     end
 
+    # Public: Close an existing reliable read
+    #
+    # queue_name - the name of the queue to abort
+    #
+    # Returns a Response
+    def close( queue_name )
+      get( queue_name, :close => true )
+    end
+
+
     # Public: Abort an existing reliable read
     #
     # queue_name - the name of the queue to abort

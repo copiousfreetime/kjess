@@ -77,6 +77,28 @@ describe KJess::Client do
     end
   end
 
+  describe "#close" do
+    it "closes an existing read" do
+      @client.set( 'close_q', 'close item 1' )
+      @client.queue_stats( 'close_q' )['open_transactions'].must_equal 0
+      i1 = @client.reserve( 'close_q' )
+      @client.queue_stats( 'close_q' )['open_transactions'].must_equal 1
+      @client.close( 'close_q' )
+      @client.queue_stats( 'close_q' )['items'].must_equal 0
+      @client.queue_stats( 'close_q' )['open_transactions'].must_equal 0
+    end
+
+    it "does not return a new item from the queue" do
+      @client.set( 'close_q', 'close item 1' )
+      @client.set( 'close_q', 'close item 2' )
+      @client.queue_stats( 'close_q' )['open_transactions'].must_equal 0
+      i1 = @client.reserve( 'close_q' )
+      @client.queue_stats( 'close_q' )['open_transactions'].must_equal 1
+      i2 = @client.close( 'close_q' )
+      @client.queue_stats( 'close_q' )['items'].must_equal 1
+      @client.queue_stats( 'close_q' )['open_transactions'].must_equal 0
+    end
+  end
   describe  "#peek" do
     it "looks at a job at the front and does not remove it" do
       @client.stats['curr_items'].must_equal 0
