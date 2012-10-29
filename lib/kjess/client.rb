@@ -93,6 +93,8 @@ module KJess
 
     # Public : Remove a queue from the kestrel server
     #
+    # This will remove any queue you want. Including queues that do not exist.
+    #
     # queue_name - the name of the queue to remove
     #
     # Returns true if it was deleted false otherwise
@@ -102,6 +104,13 @@ module KJess
       return KJess::Response::Deleted === resp
     end
 
+    # Public: Remove all items from a queue on the kestrel server
+    #
+    # This will flush any and all queue. Even queues that do not exist.
+    #
+    # queue_name - the name of the queue to flush
+    #
+    # Returns true if the queue was flushed.
     def flush( queue_name )
       req  = KJess::Request::Flush.new( :queue_name => queue_name )
       resp = send_recv( req )
