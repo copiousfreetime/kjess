@@ -124,10 +124,12 @@ module KJess
 
     # using a combination of stats and dump_stats for ease of parsing
     def stats
-      stats = send_recv( KJess::Request::Stats.new )
+      stats      = send_recv( KJess::Request::Stats.new )
+      h          = stats.data
       dump_stats = send_recv( KJess::Request::DumpStats.new )
-      h = stats.data
-      h['queues'] = dump_stats.data
+      if KJess::Response::DumpedStats === dump_stats then
+        h['queues'] = dump_stats.data
+      end
       return h
     end
 
