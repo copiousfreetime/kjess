@@ -40,17 +40,17 @@ describe KJess::Client do
       @client.stats['curr_items'].must_equal 1
     end
 
-    # it "a item with an expiration expires" do
-      # @client.stats['curr_items'].must_equal 0
-      # @client.set( 'set_q_2', "setspec",  1 )
-      # @client.stats['curr_items'].must_equal 1
-      # @client.set( 'set_q_2', "setspec2" )
-      # @client.stats['curr_items'].must_equal 2
-      # while s = @client.stats do
-        # break if s['curr_items'] == 1
-      # end
-      # @client.get( 'set_q_2' ).must_equal 'setspec2'
-    # end
+    it "a item with an expiration expires" do
+      @client.stats['curr_items'].must_equal 0
+      @client.set( 'set_q_2', "setspec",  1 )
+      @client.stats['curr_items'].must_equal 1
+      @client.set( 'set_q_2', "setspec2" )
+      @client.stats['curr_items'].must_equal 2
+      while s = @client.stats do
+        break if s['curr_items'] == 1
+      end
+      @client.get( 'set_q_2' ).must_equal 'setspec2'
+    end
   end
 
   describe "#get" do
