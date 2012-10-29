@@ -30,7 +30,7 @@ class KJess::Response
         elsif line == "END" then
           break
         else
-          raise "Unknown line from STAT command"
+          raise KJess::Error, "Unknown line '#{line}' from STAT command"
         end
       end
       @data = stats

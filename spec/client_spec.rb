@@ -7,13 +7,7 @@ describe KJess::Client do
   end
 
   after do
-    @client.flush_all
-    qlist = @client.stats['queues']
-    if qlist then
-      qlist.keys.each do |q|
-        @client.delete( q )
-      end
-    end
+    KJess::Spec.reset_server( @client )
   end
 
   describe "#version" do
@@ -68,6 +62,34 @@ describe KJess::Client do
     it "returns nil if no item is found" do
       @client.get( 'get_q' ).must_equal nil
     end
+
+    it "raises an error if peeking and aborting" do
+      lambda { @client.get( 'get_q', :peek => true, :abort => true ) }.must_raise KJess::ClientError
+    end
+
+    it "raises an error if peeking and opening" do
+      lambda { @client.get( 'get_q', :peek => true, :open => true ) }.must_raise KJess::ClientError
+    end
+
+    it "raises an error if peeking and closing " do
+      lambda { @client.get( 'get_q', :peek => true, :close => true ) }.must_raise KJess::ClientError
+    end
+
+    it "raises an error if aborting and opening" do
+      lambda { @client.get( 'get_q', :peek => true, :open => true ) }.must_raise KJess::ClientError
+    end
+
+    it "raises an error if aborting and closing" do
+      lambda { @client.get( 'get_q', :peek => true, :close => true ) }.must_raise KJess::ClientError
+    end
+
+    it "raises an error if we attempt to non-tranactionaly get after an open transaction" do
+      @client.set( "get_q", "get item 1" )
+      @client.set( "get_q", "get item 2" )
+      i1 = @client.reserve( "get_q" )
+      lambda { @client.get( "get_q" ) }.must_raise KJess::Error
+    end
+
   end
 
   describe "#reserve" do
@@ -209,7 +231,7 @@ describe KJess::Client do
 
   describe "#status" do
     it "returns the server status" do
-      lambda { @client.status }.must_raise KJess::Error
+      lambda { @client.status }.must_raise KJess::ClientError
     end
   end
 

@@ -38,7 +38,7 @@ module KJess
       v = KJess::Request::Version.new
       r = send_recv( v )
       return r.version if Response::Version === r
-      raise "WTF"
+      raise KJess::Error, "Unexpected Response from VERSION command"
     end
 
     # Public: Add an item to the given queue
@@ -214,7 +214,7 @@ module KJess
     #
     # This uses the 'stats' method to see if the server is alive
     #
-    # Returns true or fals
+    # Returns true or false
     def ping
       stats
       true
@@ -237,11 +237,17 @@ module KJess
       send_recv( KJess::Request::Shutdown.new )
     end
 
+    # Internal: Send and recive a request/response
+    #
+    # request - the Request objec to send to the server
+    #
+    # Returns a Response object
     def send_recv( request )
       connection.write( request.to_protocol )
       line = connection.readline
       resp = KJess::Response.parse( line )
       resp.read_more( connection )
+      raise resp if resp.error?
       return resp
     end
   end
