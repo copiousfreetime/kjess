@@ -11,28 +11,23 @@ class KJess::Response
     #
     # Returns nothing
     def read_more( connection )
-      stat_line_re  = /\ASTAT (\S+) (\S+)\Z/
-      stats         = Hash.new
-
-      md = stat_line_re.match( message.strip )
-      return unless md
-
       stats = Hash.new
-      stats[md.captures[0]] = md.captures[1]
+      line  = message
 
-      while line = connection.readline do
-        line.strip!
-        if md = stat_line_re.match( line ) then
-          next unless key = convert_key( md.captures[0] )
-
-          value      = convert_value( md.captures[1] )
+      begin
+        cmd, raw_key, raw_value = line.strip.split
+        case cmd
+        when "STAT"
+          key        = convert_key( raw_key )
+          value      = convert_value( raw_value )
           stats[key] = value
-        elsif line == "END" then
+        when "END"
           break
         else
-          raise KJess::Error, "Unknown line '#{line}' from STAT command"
+          raise KJess::Error, "Unknown line '#{line.strip}' from STAT command"
         end
-      end
+      end while line = connection.readline
+
       @data = stats
     end
 
