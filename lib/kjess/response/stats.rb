@@ -11,7 +11,7 @@ class KJess::Response
     #
     # Returns nothing
     def read_more( connection )
-      stat_line_re  = /\ASTAT (\w+) (\S+)\Z/
+      stat_line_re  = /\ASTAT (\S+) (\S+)\Z/
       stats         = Hash.new
 
       md = stat_line_re.match( message.strip )
