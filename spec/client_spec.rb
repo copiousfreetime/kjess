@@ -10,6 +10,20 @@ describe KJess::Client do
     KJess::Spec.reset_server( @client )
   end
 
+  describe "connection" do
+    it "knows if it is connected" do
+      @client.ping
+      @client.connected?.must_equal true
+    end
+
+    it "can disconnect and know it is disconnected" do
+      @client.ping
+      @client.connected?.must_equal true
+      @client.disconnect
+      @client.connected?.must_equal false
+    end
+  end
+
   describe "#version" do
     it "knows the version of the server" do
       @client.version.must_equal "2.3.4"

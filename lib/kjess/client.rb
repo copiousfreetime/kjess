@@ -9,9 +9,6 @@ module KJess
     # Public: The admin HTTP Port on the Kestrel server
     attr_reader :admin_port
 
-    # Internal: The KJess::Connection to the kestrel server
-    attr_reader :connection
-
     # Public: The default parameters for a client connection to a Kestrel
     # server.
     def self.defaults
@@ -28,6 +25,30 @@ module KJess
       @port       = merged[:port]
       @admin_port = merged[:admin_port]
       @connection = KJess::Connection.new( host, port )
+    end
+
+    # Public: Disconnect from the Kestrel server
+    #
+    # Returns nothing
+    def disconnect
+      @connection.close if connected?
+      @connection = nil
+    end
+
+    # Internal: Allocate or return the existing connection to the server
+    #
+    # Returns a KJess::Connection
+    def connection
+      @connection ||= KJess::Connection.new( host, port )
+    end
+
+    # Public: is the client connected to a server
+    #
+    # Returns true or false
+    def connected?
+      return false if @connection.nil?
+      return false if @connection.closed?
+      return true
     end
 
     # Public: Return the version of the Kestrel Server.

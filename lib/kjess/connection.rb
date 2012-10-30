@@ -64,10 +64,19 @@ module KJess
 
     # Internal: close the socket if it is not already closed
     #
-    # Returns nothign
+    # Returns nothing
     def close
       @socket.close if @socket and not @socket.closed?
       @socket = nil
+    end
+
+    # Internal: is the socket closed
+    #
+    # Returns true or false
+    def closed?
+      return true if @socket.nil?
+      return true if @socket.closed?
+      return false
     end
 
     # Internal: write the given item to the socket
