@@ -11,7 +11,7 @@ class KJess::Response
     #
     # Returns nothing
     def read_more( connection )
-      queue_line_re = /\Aqueue\s+'(\w+)' \{\Z/
+      queue_line_re = /\Aqueue\s+'(\S+)' \{\Z/
       stat_line_re  = /\A(\w+)=(\S+)\Z/
       stats         = Hash.new
       line          = message.strip
