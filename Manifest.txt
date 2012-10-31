@@ -40,6 +40,7 @@ lib/kjess/response/stored.rb
 lib/kjess/response/unknown.rb
 lib/kjess/response/value.rb
 lib/kjess/response/version.rb
+lib/kjess/stats_cache.rb
 spec/client_spec.rb
 spec/kestrel_server.rb
 spec/request/set_spec.rb
