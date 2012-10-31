@@ -108,7 +108,7 @@ describe KJess::Client do
     it "raises an error if we attempt to non-tranactionaly get after an open transaction" do
       @client.set( "get_q", "get item 1" )
       @client.set( "get_q", "get item 2" )
-      i1 = @client.reserve( "get_q" )
+      @client.reserve( "get_q" )
       lambda { @client.get( "get_q" ) }.must_raise KJess::Error
     end
 
@@ -146,7 +146,7 @@ describe KJess::Client do
     it "closes an existing read" do
       @client.set( 'close_q', 'close item 1' )
       @client.queue_stats( 'close_q' )['open_transactions'].must_equal 0
-      i1 = @client.reserve( 'close_q' )
+      @client.reserve( 'close_q' )
       @client.queue_stats( 'close_q' )['open_transactions'].must_equal 1
       @client.close( 'close_q' )
       @client.queue_stats( 'close_q' )['items'].must_equal 0
@@ -157,9 +157,9 @@ describe KJess::Client do
       @client.set( 'close_q', 'close item 1' )
       @client.set( 'close_q', 'close item 2' )
       @client.queue_stats( 'close_q' )['open_transactions'].must_equal 0
-      i1 = @client.reserve( 'close_q' )
+      @client.reserve( 'close_q' )
       @client.queue_stats( 'close_q' )['open_transactions'].must_equal 1
-      i2 = @client.close( 'close_q' )
+      @client.close( 'close_q' )
       @client.queue_stats( 'close_q' )['items'].must_equal 1
       @client.queue_stats( 'close_q' )['open_transactions'].must_equal 0
     end
@@ -171,7 +171,7 @@ describe KJess::Client do
       q_stats = @client.queue_stats('abort_q')
       q_stats['items'].must_equal 1
 
-      i1 = @client.reserve( 'abort_q' )
+      @client.reserve( 'abort_q' )
       q_stats = @client.queue_stats('abort_q')
       q_stats['open_transactions'].must_equal 1
 
@@ -187,7 +187,7 @@ describe KJess::Client do
   describe  "#peek" do
     it "looks at a item at the front and does not remove it" do
       @client.stats['curr_items'].must_equal 0
-      r = @client.set( 'peek_q', "peekitem" )
+      @client.set( 'peek_q', "peekitem" )
       @client.stats['curr_items'].must_equal 1
       @client.peek('peek_q').must_equal 'peekitem'
       @client.stats['curr_items'].must_equal 1

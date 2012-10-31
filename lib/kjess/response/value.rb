@@ -20,7 +20,7 @@ class KJess::Response
       @data      = total_data[0...bytes]
 
       line = connection.readline
-      resp = KJess::Response.parse( line )
+      KJess::Response.parse( line ) # throw away the 'END' line
     end
   end
 end
