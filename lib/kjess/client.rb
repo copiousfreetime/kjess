@@ -25,11 +25,11 @@ module KJess
     end
 
     def initialize( opts = {} )
-      merged                  = Client.defaults.merge( opts )
-      @host                   = merged[:host]
-      @port                   = merged[:port]
-      @admin_port             = merged[:admin_port]
-      @stats_cache            = StatsCache.new( self, merged[:stats_cache_expiration] )
+      merged       = Client.defaults.merge( opts )
+      @host        = merged[:host]
+      @port        = merged[:port]
+      @admin_port  = merged[:admin_port]
+      @stats_cache = StatsCache.new( self, merged[:stats_cache_expiration] )
       @connection = KJess::Connection.new( host, port )
     end
 
