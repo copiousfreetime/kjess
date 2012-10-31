@@ -1,3 +1,4 @@
+require 'kjess/stats_cache'
 module KJess
   class Client
     # Public: The hostname of the kestrel server to connect to
@@ -9,21 +10,26 @@ module KJess
     # Public: The admin HTTP Port on the Kestrel server
     attr_reader :admin_port
 
+    # Internal: The cache of stats
+    attr_reader :stats_cache
+
     # Public: The default parameters for a client connection to a Kestrel
     # server.
     def self.defaults
       {
-        :host       => 'localhost',
-        :port       => 22133,
-        :admin_port => 2223
+        :host                   => 'localhost',
+        :port                   => 22133,
+        :admin_port             => 2223,
+        :stats_cache_expiration => 0, # number of seconds to keep stats around
       }
     end
 
     def initialize( opts = {} )
-      merged      = Client.defaults.merge( opts )
-      @host       = merged[:host]
-      @port       = merged[:port]
-      @admin_port = merged[:admin_port]
+      merged                  = Client.defaults.merge( opts )
+      @host                   = merged[:host]
+      @port                   = merged[:port]
+      @admin_port             = merged[:admin_port]
+      @stats_cache            = StatsCache.new( self, merged[:stats_cache_expiration] )
       @connection = KJess::Connection.new( host, port )
     end
 
@@ -214,13 +220,21 @@ module KJess
       return resp.message
     end
 
-    # Public: Return stats about the Kestrel server
+    # Public: Return stats about the Kestrel server, they will be cached
+    # according to the stats_cache_expiration initialization parameter
+    #
+    # Returns a Hash
+    def stats
+      stats_cache.stats
+    end
+
+    # Internal: Return the hash of stats
     #
     # Using a combination of the STATS and DUMP_STATS commands this generates a
     # good overview of all the most used stats for a Kestrel server.
     #
     # Returns a Hash
-    def stats
+    def stats!
       stats       = send_recv( KJess::Request::Stats.new )
       h           = stats.data
       dump_stats  = send_recv( KJess::Request::DumpStats.new )
