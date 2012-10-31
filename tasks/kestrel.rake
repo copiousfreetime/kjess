@@ -46,14 +46,17 @@ namespace :kestrel do
     end
   end
 
+  desc "Start a kestrel server"
   task :start => KJess::Spec::KestrelServer.config_file do
     KJess::Spec::KestrelServer.start
   end
 
+  desc "Stop a kestrel server"
   task :stop => KJess::Spec::KestrelServer.config_file do
     KJess::Spec::KestrelServer.stop
   end
 
+  desc "See the status of the kestrel server"
   task :status => KJess::Spec::KestrelServer.config_file do
     KJess::Spec::KestrelServer.status
   end
