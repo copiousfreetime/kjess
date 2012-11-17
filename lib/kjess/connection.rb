@@ -60,6 +60,8 @@ module KJess
       # @sock.setsockopt(Socket::SOL_TCP,    Socket::TCP_KEEPINTVL, keepalive[:intvl])
       # @sock.setsockopt(Socket::SOL_TCP,    Socket::TCP_KEEPCNT,   keepalive[:probes])
       return sock
+    rescue => e
+      raise Error, "Could not connect to #{host}:#{port}: #{e.class}: #{e.message}", e.backtrace
     end
 
     # Internal: close the socket if it is not already closed
@@ -87,6 +89,9 @@ module KJess
     def write( msg )
       $stderr.write "--> #{msg}" if $DEBUG
       socket.write( msg )
+    rescue => e
+      close
+      raise Error, "Could not write to #{host}:#{port}: #{e.class}: #{e.message}", e.backtrace
     end
 
     # Internal: read a single line from the socket
@@ -103,6 +108,9 @@ module KJess
     rescue EOFError
       close
       return "EOF"
+    rescue => e
+      close
+      raise Error, "Could not read from #{host}:#{port}: #{e.class}: #{e.message}", e.backtrace
     end
 
     # Internal: Read from the socket
@@ -114,6 +122,9 @@ module KJess
       d = socket.read( *args )
       $stderr.puts "<-- #{d}" if $DEBUG
       return d
+    rescue => e
+      close
+      raise Error, "Could not read from #{host}:#{port}: #{e.class}: #{e.message}", e.backtrace
     end
   end
 end
