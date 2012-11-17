@@ -7,10 +7,10 @@ namespace :kestrel do
     require 'uri'
     require 'net/http'
 
-    url = ::URI.parse("http://robey.github.com/kestrel/download/kestrel-#{KJess::Spec::KestrelServer.erver.version}.zip")
+    url = ::URI.parse("http://robey.github.com/kestrel/download/kestrel-#{KJess::Spec::KestrelServer.version}.zip")
 
     puts "downloading #{url.to_s} to #{KJess::Spec::KestrelServer.zip} ..."
-    File.open( KJess::Spec::KestrelServer.erver.zip, "wb+") do |f|
+    File.open( KJess::Spec::KestrelServer.zip, "wb+") do |f|
       res = Net::HTTP.get_response( url )
       f.write( res.body )
     end
