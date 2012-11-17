@@ -32,8 +32,11 @@ module KJess
     #
     # Returns a TCPSocket
     def socket
+      close if @pid && @pid != Process.pid
       return @socket if @socket and not @socket.closed?
-      return @socket = connect()
+      @socket = connect()
+      @pid = Process.pid
+      return @socket
     end
 
     # Internal: Create the socket we use to talk to the Kestrel server
