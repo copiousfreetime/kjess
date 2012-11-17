@@ -261,7 +261,10 @@ end
 # Load the extra rake tasks
 #------------------------------------------------------------------------------
 $: << "." unless $:.include?(".")
-load 'tasks/kestrel.rake'
+begin
+  load 'tasks/kestrel.rake'
+rescue LoadError
+end
 
 #------------------------------------------------------------------------------
 # Rakefile Support - This is all the guts and utility methods that are
