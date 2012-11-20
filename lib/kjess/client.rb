@@ -95,7 +95,13 @@ module KJess
       opts = opts.merge( :queue_name => queue_name )
       g    = KJess::Request::Get.new( opts )
 
-      connection.with_additional_read_timeout(opts[:wait_for] || 0.1) do
+      if opts[:wait_for]
+        wait_for_in_seconds = opts[:wait_for] / 1000
+      else
+        wait_for_in_seconds = 0.1
+      end
+
+      connection.with_additional_read_timeout(wait_for_in_seconds) do
         resp = send_recv( g )
         return resp.data if KJess::Response::Value === resp
         return nil
