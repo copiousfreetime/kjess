@@ -183,7 +183,7 @@ module KJess
           @read_buffer << readpartial(10240)
         end
 
-        line = @read_buffer.slice!(0, idx + eom.bytesize)
+        line = @read_buffer.slice!(0, idx + eom.length)
         $stderr.puts "<-- #{line}" if $DEBUG
         break unless line.strip.length == 0
       end
@@ -203,8 +203,8 @@ module KJess
     #
     # Returns what IO#read returns
     def read( nbytes )
-      while @read_buffer.bytesize < nbytes
-        @read_buffer << readpartial(nbytes - @read_buffer.bytesize)
+      while @read_buffer.length < nbytes
+        @read_buffer << readpartial(nbytes - @read_buffer.length)
       end
 
       result = @read_buffer.slice!(0, nbytes)
