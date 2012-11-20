@@ -157,7 +157,7 @@ module KJess
 
       begin
         until msg.length == 0
-          written = socket.syswrite(msg)
+          written = socket.write_nonblock(msg)
           msg = msg[written, msg.length]
         end
       rescue Errno::EWOULDBLOCK, Errno::EINTR, Errno::EAGAIN
@@ -217,7 +217,7 @@ module KJess
     end
 
     def readpartial(maxlen, outbuf = nil)
-      return socket.sysread(maxlen, outbuf)
+      return socket.read_nonblock(maxlen, outbuf)
     rescue Errno::EWOULDBLOCK, Errno::EAGAIN
       if IO.select([socket], nil, nil, @read_timeout)
         retry
