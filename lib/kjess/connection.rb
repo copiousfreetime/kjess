@@ -49,61 +49,17 @@ module KJess
       @write_deadline = nil
     end
 
-    # Internal: Starts the read timeout deadline for operations
+    # Internal: Adds time to the read timeout
     #
-    # timeout - the timeout to set in seconds. This value is added to the
-    #           class-wide `read_timeout`
-    #
-    # Returns nothing
-    def with_read_timeout(timeout = nil, &block)
-      if @read_deadline
-        block.call
-      else
-        begin
-          @current_read_timeout = timeout ? timeout + @read_timeout : @read_timeout
-          @read_deadline = Time.now.to_f + @current_read_timeout
-          block.call
-        ensure
-          @current_read_timeout = @read_deadline = nil
-        end
-      end
-    end
-
-    # Internal: Gets the current read timeout
-    #
-    # Returns an Integer
-    def read_timeout_for_deadline
-      timeout = @read_deadline ? @read_deadline - Time.now.to_f : @read_timeout
-      if timeout <= 0
-        raise Timeout, "Could not read from #{host}:#{port} in #{@current_read_timeout} seconds"
-      end
-      timeout
-    end
-
-    # Internal: Starts the write timeout deadline for operations
+    # additional_timeout - additional number of seconds to the read timeout
     #
     # Returns nothing
-    def with_write_timeout(&block)
-      if @write_deadline
-        block.call
-      else
-        begin
-          @write_deadline = Time.now.to_f + @write_timeout
-          block.call
-        ensure
-          @write_deadline = nil
-        end
-      end
+    def with_additional_read_timeout(additional_timeout, &block)
+      old_read_timeout, @read_timeout = @read_timeout, @read_timeout + additional_timeout
+      block.call
+    ensure
+      @read_timeout = old_read_timeout
     end
-
-    def write_timeout_for_deadline
-      timeout = @write_deadline ? @write_deadline - Time.now.to_f : @write_timeout
-      if timeout <= 0
-        raise Timeout, "Could not write to #{host}:#{port} in #{@write_timeout} seconds"
-      end
-      timeout
-    end
-
 
     # Internal: Return the raw socket that is connected to the Kestrel server
     #
@@ -199,19 +155,23 @@ module KJess
     #
     # Returns nothing
     def write( msg )
-      with_write_timeout do
-        $stderr.puts "--> #{msg}" if $DEBUG
+      $stderr.puts "--> #{msg}" if $DEBUG
 
-        begin
-          until msg.length == 0
-            written = socket.syswrite(msg)
-            msg = msg[written, msg.size]
-          end
-        rescue Errno::EWOULDBLOCK, Errno::EINTR, Errno::EAGAIN
-          IO.select(nil, [socket], nil, write_timeout_for_deadline)
+      begin
+        until msg.length == 0
+          written = socket.syswrite(msg)
+          msg = msg[written, msg.length]
+        end
+      rescue Errno::EWOULDBLOCK, Errno::EINTR, Errno::EAGAIN
+        if IO.select(nil, [socket], nil, @write_timeout)
           retry
+        else
+          raise Timeout, "Could not write to #{host}:#{port} in #{@write_timeout} seconds"
         end
       end
+    rescue Timeout
+      close
+      raise
     end
 
     # Internal: read a single line from the socket
@@ -220,19 +180,17 @@ module KJess
     #
     # Returns a String
     def readline( eom = Protocol::CRLF )
-      with_read_timeout do
-        while true
-          while (idx = @read_buffer.index(eom)) == nil
-            readpartial(4096, @read_buffer)
-          end
-
-          line = @read_buffer.slice!(0, idx + eom.bytesize)
-          $stderr.puts "<-- #{line}" if $DEBUG
-          break unless line.strip.length == 0
+      while true
+        while (idx = @read_buffer.index(eom)) == nil
+          @read_buffer << readpartial(10240)
         end
 
-        return line
+        line = @read_buffer.slice!(0, idx + eom.bytesize)
+        $stderr.puts "<-- #{line}" if $DEBUG
+        break unless line.strip.length == 0
       end
+
+      return line
     rescue Timeout
       close
       raise
@@ -247,23 +205,27 @@ module KJess
     #
     # Returns what IO#read returns
     def read( nbytes )
-      with_read_timeout do
-        while @read_buffer.bytesize < nbytes
-          readpartial(nbytes - @read_buffer.bytesize, @read_buffer)
-        end
-
-        result = @read_buffer.slice!(0, nbytes)
-
-        $stderr.puts "<-- #{result}" if $DEBUG
-        return result
+      while @read_buffer.bytesize < nbytes
+        @read_buffer << readpartial(nbytes - @read_buffer.bytesize)
       end
+
+      result = @read_buffer.slice!(0, nbytes)
+
+      $stderr.puts "<-- #{result}" if $DEBUG
+      return result
+    rescue Timeout
+      close
+      raise
     end
 
     def readpartial(maxlen, outbuf = nil)
       return socket.sysread(maxlen, outbuf)
     rescue Errno::EWOULDBLOCK, Errno::EAGAIN
-      IO.select([socket], nil, nil, read_timeout_for_deadline)
-      retry
+      if IO.select([socket], nil, nil, @read_timeout)
+        retry
+      else
+        raise Timeout, "Could not read from #{host}:#{port} in #{@read_timeout} seconds"
+      end
     end
   end
 end

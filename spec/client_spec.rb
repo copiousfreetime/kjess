@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-#$DEBUG = true 
+# $DEBUG = true
 describe KJess::Client do
   before do
-    @client = KJess::Client.new
+    @client = KJess::Client.new(:host => '127.0.0.1', :port => 22129)
   end
 
   after do
@@ -64,6 +64,12 @@ describe KJess::Client do
         break if s['curr_items'] == 1
       end
       @client.get( 'set_q_2' ).must_equal 'setspec2'
+    end
+
+    it 'a really long binary item' do
+      binary = (0..255).to_a.pack('c*') * 100
+      @client.set 'set_bin_q', binary
+      @client.get('set_bin_q').must_equal binary
     end
   end
 

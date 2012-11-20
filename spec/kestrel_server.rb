@@ -47,7 +47,9 @@ import net.lag.kestrel.config._
 
 new KestrelConfig {
   listenAddress = "0.0.0.0"
-  memcacheListenPort = 22133
+  memcacheListenPort = 22129
+  textListenPort = 22298
+  thriftListenPort = 22299
 
   queuePath = "#{KJess::Spec::KestrelServer.queue_path}"
 
@@ -62,7 +64,7 @@ new KestrelConfig {
   default.maxMemorySize = 128.megabytes
   default.maxJournalSize = 1.gigabyte
 
-  admin.httpPort = 2223
+  admin.httpPort = 2230
 
   admin.statsNodes = new StatsConfig {
     reporters = new TimeSeriesCollectorConfig
@@ -80,7 +82,7 @@ _EOC
       end
 
       def get_response( path )
-        uri = URI.parse( "http://localhost:2223/#{path}" )
+        uri = URI.parse( "http://localhost:2230/#{path}" )
         resp = Net::HTTP.get_response( uri )
         JSON.parse( resp.body )
       end
