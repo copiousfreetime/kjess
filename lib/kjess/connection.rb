@@ -45,8 +45,6 @@ module KJess
 
       @socket         = nil
       @read_buffer    = ''
-      @read_deadline  = nil
-      @write_deadline = nil
     end
 
     # Internal: Adds time to the read timeout
