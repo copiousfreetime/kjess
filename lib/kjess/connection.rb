@@ -23,6 +23,7 @@ module KJess
       @host   = host
       @port   = Float( port ).to_i
       @socket = nil
+      @pid    = nil
     end
 
     # Internal: Return the raw socket that is connected to the Kestrel server
