@@ -6,7 +6,7 @@ module KJess::Spec
 
     class << self
       def version
-        "2.3.4"
+        "2.4.1"
       end
 
       def dir
@@ -18,7 +18,7 @@ module KJess::Spec
       end
 
       def jar
-        File.join( dir, "kestrel_2.9.1-#{version}.jar" )
+        File.join( dir, "kestrel_2.9.2-#{version}.jar" )
       end
 
       def queue_path
