@@ -6,6 +6,7 @@
 * Update development dependencies, new version and missing gems
 * Re-wrap all network errors with KJess Errors
 * Ensure clients are not shared across fork()
+* Enforce boolean return value from KJess::Client#set
 
 == Version 1.0.0 - 2012-10-31
 
