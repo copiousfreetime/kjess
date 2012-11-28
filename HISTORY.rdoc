@@ -1,4 +1,10 @@
 = KJess Changlog
+
+== Version 1.1.0 - 2012-11-28
+
+* Allow the setting of the kestrel server processes ports for testing
+* Update development dependencies, new version and missing gems
+
 == Version 1.0.0 - 2012-10-31
 
 * Initial Release - Yeah!

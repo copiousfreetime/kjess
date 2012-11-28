@@ -35,7 +35,7 @@ easiest way to contribute.
 
 # Contributors
 
-* Jeremy Hinegardner
+* Jeremy Hinegardner <https://github.com/copiousfreetime>
 
 [GitHub Account]: https://github.com/signup/free "GitHub Signup"
 [GitHub Issues]:  https://github.com/copiousfreetime/kjess/issues "KJess Issues"
