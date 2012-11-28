@@ -36,6 +36,7 @@ easiest way to contribute.
 # Contributors
 
 * Jeremy Hinegardner <https://github.com/copiousfreetime>
+* Eric Lidvall <https://github.com/eric>
 
 [GitHub Account]: https://github.com/signup/free "GitHub Signup"
 [GitHub Issues]:  https://github.com/copiousfreetime/kjess/issues "KJess Issues"

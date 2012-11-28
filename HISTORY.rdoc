@@ -4,6 +4,7 @@
 
 * Allow the setting of the kestrel server processes ports for testing
 * Update development dependencies, new version and missing gems
+* Re-wrap all network errors with KJess Errors
 
 == Version 1.0.0 - 2012-10-31
 
