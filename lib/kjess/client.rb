@@ -77,7 +77,9 @@ module KJess
     # Returns true if successful, false otherwise
     def set( queue_name, item, expiration = 0 )
       s = KJess::Request::Set.new( :queue_name => queue_name, :data => item, :expiration => expiration )
-      send_recv( s )
+      resp = send_recv( s )
+
+      return KJess::Response::Stored === resp
     end
 
     # Public: Retrieve an item from the given queue
