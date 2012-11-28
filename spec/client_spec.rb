@@ -1,10 +1,9 @@
 require 'spec_helper'
 
-#$DEBUG = true 
 describe KJess::Client do
   before do
     @client_version = "2.4.1"
-    @client = KJess::Client.new
+    @client = KJess::Spec.kjess_client()
   end
 
   after do

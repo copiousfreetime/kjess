@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe KJess::ClientError do
   before do
-    @client = KJess::Client.new
+    @client = KJess::Spec.kjess_client()
   end
 
   after do
