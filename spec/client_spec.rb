@@ -3,6 +3,7 @@ require 'spec_helper'
 #$DEBUG = true 
 describe KJess::Client do
   before do
+    @client_version = "2.4.1"
     @client = KJess::Client.new
   end
 
@@ -26,13 +27,13 @@ describe KJess::Client do
 
   describe "#version" do
     it "knows the version of the server" do
-      @client.version.must_equal "2.3.4"
+      @client.version.must_equal @client_version
     end
   end
 
   describe "#stats" do
     it "can see the stats on an empty server" do
-      @client.stats['version'].must_equal '2.3.4'
+      @client.stats['version'].must_equal @client_version
     end
 
     it "sees the stats on a server with queues" do
