@@ -47,7 +47,9 @@ import net.lag.kestrel.config._
 
 new KestrelConfig {
   listenAddress = "0.0.0.0"
-  memcacheListenPort = 22133
+  memcacheListenPort = #{KJess::Spec.memcache_port}
+  textListenPort = #{KJess::Spec.text_port}
+  thriftListenPort = #{KJess::Spec.thrift_port}
 
   queuePath = "#{KJess::Spec::KestrelServer.queue_path}"
 
@@ -62,7 +64,7 @@ new KestrelConfig {
   default.maxMemorySize = 128.megabytes
   default.maxJournalSize = 1.gigabyte
 
-  admin.httpPort = 2223
+  admin.httpPort = #{KJess::Spec.admin_port}
 
   admin.statsNodes = new StatsConfig {
     reporters = new TimeSeriesCollectorConfig
@@ -100,6 +102,7 @@ _EOC
       def is_running?
         return "pong" == ping
       rescue Exception => e
+        $stderr.puts e
         false
       end
 
@@ -129,9 +132,9 @@ _EOC
         h = get_response( 'shutdown' )
         return h['response'] == "ok"
       rescue => e
+        $stderr.puts e
         false
       end
     end
-
   end
 end
