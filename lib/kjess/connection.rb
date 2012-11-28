@@ -30,6 +30,9 @@ module KJess
     # Returns the raw socket. If the socket is not connected it will connect and
     # then return it.
     #
+    # Make sure that we close the socket if we are not the same process that
+    # opened that socket to begin with.
+    #
     # Returns a TCPSocket
     def socket
       close if @pid && @pid != Process.pid
