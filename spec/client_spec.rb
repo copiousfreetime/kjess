@@ -65,6 +65,12 @@ describe KJess::Client do
       end
       @client.get( 'set_q_2' ).must_equal 'setspec2'
     end
+
+    it 'a really long binary item' do
+      binary = (0..255).to_a.pack('c*') * 100
+      @client.set 'set_bin_q', binary
+      @client.get('set_bin_q').must_equal binary
+    end
   end
 
   describe "#get" do
@@ -260,6 +266,64 @@ describe KJess::Client do
   describe "#ping" do
     it "knows if a server is up" do
       @client.ping.must_equal true
+    end
+  end
+
+  describe "connecting to a server on a port that isn't listening" do
+    it "throws an exception" do
+      c = KJess::Connection.new '127.0.0.1', 65521
+      lambda { c.socket }.must_raise KJess::Connection::Error
+    end
+  end
+
+  describe "connecting to a server that isn't responding" do
+    it "throws an exception" do
+      c = KJess::Connection.new '127.1.1.1', 65521, :timeout => 0.5
+      lambda { c.socket }.must_raise KJess::Connection::Timeout
+    end
+  end
+
+  describe "reading for longer than the timeout" do
+    it "throws an exception" do
+      t = Thread.new do
+        begin
+          server = TCPServer.new 65520
+          client = server.accept
+          Thread.stop
+        ensure
+          server.close rescue nil
+          client.close rescue nil
+        end
+      end
+
+      c = KJess::Connection.new '127.0.0.1', 65520, :timeout => 0.5
+
+      lambda { c.readline }.must_raise KJess::Connection::Timeout
+
+      t.run
+      t.join
+    end
+  end
+
+  describe "writing for longer than the timeout" do
+    it "throws an exception" do
+      t = Thread.new do
+        begin
+          server = TCPServer.new 65520
+          client = server.accept
+          Thread.stop
+        ensure
+          server.close rescue nil
+          client.close rescue nil
+        end
+      end
+
+      c = KJess::Connection.new '127.0.0.1', 65520, :timeout => 0.5
+
+      lambda { c.write('a' * 10000000) }.must_raise KJess::Connection::Timeout
+
+      t.run
+      t.join
     end
   end
 end

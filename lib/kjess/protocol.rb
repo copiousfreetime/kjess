@@ -14,11 +14,12 @@ module KJess
       #
       # Returns the name
       def keyword( name = nil )
+        @keyword = nil unless defined? @keyword
         if name then
           register( name )
           @keyword = name
         end
-        @keyword
+        @keyword ||= nil
       end
 
       # Internal: define or return the arity of this protocol item
