@@ -259,7 +259,14 @@ describe KJess::Client do
 
   describe "#status" do
     it "returns the server status" do
-      lambda { @client.status }.must_raise KJess::ClientError
+      @client.status.must_equal "UP"
+    end
+
+    it "can change the status" do
+      @client.status( "readonly" ).must_equal "END"
+      @client.status.must_equal "READONLY"
+      @client.status( "up" ).must_equal "END"
+      @client.status.must_equal "UP"
     end
   end
 

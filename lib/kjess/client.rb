@@ -235,7 +235,7 @@ module KJess
     #
     # Returns a String.
     def status( update_to = nil )
-      resp = send_recv( KJess::Request::Status.new( update_to ) )
+      resp = send_recv( KJess::Request::Status.new( :update_to => update_to ) )
       raise KJess::Error, "Status command is not supported" if KJess::Response::ClientError === resp
       return resp.message
     end
