@@ -1,5 +1,5 @@
 module KJess
-  # Protocl is the base class that all Kestrel requests and responses are
+  # Protocol is the base class that all Kestrel requests and responses are
   # developed on. it defines the DSL for creating the Request and Response
   # objects that make up the Protocol.
   #
