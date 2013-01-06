@@ -136,8 +136,8 @@ module KJess
       # Calculate our timeout deadline
       deadline = Time.now.to_f + @connect_timeout
 
-      # Lookup address
-      addrs = ::Socket.getaddrinfo(host, nil)
+      # Lookup address, we only want          IPv4 , TCP
+      addrs = ::Addrinfo.getaddrinfo(host, port, :INET, :STREAM )
 
       addrs.each do |addr|
         timeout = deadline - Time.now.to_f
@@ -145,15 +145,16 @@ module KJess
 
         sock = blank_socket()
 
+        begin
           begin
-            sock.connect_nonblock(sockaddr)
+            sock.connect_nonblock( addr.to_sockaddr )
           rescue Errno::EINPROGRESS
             if IO.select(nil, [sock], nil, timeout) == nil
               raise Timeout, "Could not connect to #{host}:#{port}"
             end
 
             begin
-              sock.connect_nonblock(sockaddr)
+              sock.connect_nonblock( addr.to_sockaddr )
             rescue Errno::EISCONN
             rescue => ex
               exception = ex
