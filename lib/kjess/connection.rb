@@ -44,6 +44,11 @@ module KJess
       @read_timeout    = options.fetch(:read_timeout   , 2)
       @write_timeout   = options.fetch(:write_timeout  , 2)
 
+      @keepalive_active   = options.fetch(:keepalive_active, true)
+      @keepalive_time     = options.fetch(:keepalive_time    , 60)
+      @keepalive_interval = options.fetch(:keepalive_interval, 30)
+      @keepalive_probes   = options.fetch(:keepalive_probes,    5)
+
       @socket          = nil
       @pid             = nil
       @read_buffer     = ''
@@ -79,21 +84,53 @@ module KJess
       return @socket
     end
 
+    # Internal: Low level socket allocation and option configuration
+    #
+    # Returns a new Socket instance
+    def blank_socket
+      sock = ::Socket.new(:INET, :STREAM)
+
+      # close file descriptors if we exec
+      sock.fcntl(Fcntl::F_SETFD, Fcntl::FD_CLOEXEC)
+
+      # Disable Nagle's algorithm
+      sock.setsockopt(::Socket::IPPROTO_TCP, ::Socket::TCP_NODELAY, 1)
+
+      if using_keepalive? then
+        sock.setsockopt( Socket::SOL_SOCKET, Socket::SO_KEEPALIVE , true )
+        sock.setsockopt( Socket::SOL_TCP,    Socket::TCP_KEEPIDLE , keepalive_idle )
+        sock.setsockopt( Socket::SOL_TCP,    Socket::TCP_KEEPINTVL, keepalive_interval)
+        sock.setsockopt( Socket::SOL_TCP,    Socket::TCP_KEEPCNT  , keepalive_count)
+      end
+
+      return sock
+
+    end
+
+    # Internal: say if we are using TCP Keep Alive or not
+    #
+    # We will return true if the initialization options :keepalive_active is
+    # set to true, and if all the constants that are necessary to use TCP keep
+    # alive are defined.
+    #
+    # It may be the case that on some operating systems that the constants are
+    # not defined, so in that case we do not want to attempt to use tcp keep
+    # alive if we are unable to do so in any case.
+    #
+    # Returns true or false
+    def using_keepalive?
+      using = false
+      if @keepalive_active then
+        using = [ :SOL_SOCKET, :SO_KEEPALIVE, :SOL_TCP, :TCP_KEEPIDLE, :TCP_KEEPINTVL, :TCP_KEEPCNT].all? do |c|
+          Socket.const_defined? c
+        end
+      end
+      return using
+    end
     # Internal: Create the socket we use to talk to the Kestrel server
     #
     # Returns a Socket
     def connect
-      # limit only to IPv4?
-      # addr = ::Socket.getaddrinfo(host, nil, Socket::AF_INET)
-      # sock = ::Socket.new(::Socket.const_get(addr[0][0]), Socket::SOCK_STREAM, 0)
-      # saddr = ::Socket.pack_sockaddr_in(port, addr[0][3])
-
-      # tcp keepalive
-      # :SOL_SOCKET, :SO_KEEPALIVE, :SOL_TCP, :TCP_KEEPIDLE, :TCP_KEEPINTVL, :TCP_KEEPCNT].all?{|c| Socket.const_defined? c}
-      # @sock.setsockopt(Socket::SOL_SOCKET, Socket::SO_KEEPALIVE,  true)
-      # @sock.setsockopt(Socket::SOL_TCP,    Socket::TCP_KEEPIDLE,  keepalive[:time])
-      # @sock.setsockopt(Socket::SOL_TCP,    Socket::TCP_KEEPINTVL, keepalive[:intvl])
-      # @sock.setsockopt(Socket::SOL_TCP,    Socket::TCP_KEEPCNT,   keepalive[:probes])
       exception = nil
 
       # Calculate our timeout deadline
@@ -104,19 +141,9 @@ module KJess
 
       addrs.each do |addr|
         timeout = deadline - Time.now.to_f
-        if timeout <= 0
-          raise Timeout, "Could not connect to #{host}:#{port}"
-        end
+        raise Timeout, "Could not connect to #{host}:#{port}" unless timeout > 0
 
-        begin
-          sock     = ::Socket.new(addr[4], Socket::SOCK_STREAM, 0)
-          sockaddr = ::Socket.pack_sockaddr_in(port, addr[3])
-
-          # close file descriptors if we exec
-          sock.fcntl(Fcntl::F_SETFD, Fcntl::FD_CLOEXEC)
-
-          # Disable Nagle's algorithm
-          sock.setsockopt(::Socket::IPPROTO_TCP, ::Socket::TCP_NODELAY, 1)
+        sock = blank_socket()
 
           begin
             sock.connect_nonblock(sockaddr)
