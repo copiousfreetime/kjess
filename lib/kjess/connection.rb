@@ -40,9 +40,9 @@ module KJess
       @host            = host
       @port            = Float( port ).to_i
 
-      @connect_timeout = options[:connect_timeout] || 2
-      @read_timeout    = options[:read_timeout]    || 2
-      @write_timeout   = options[:write_timeout]   || 2
+      @connect_timeout = options.fetch(:connect_timeout, 2)
+      @read_timeout    = options.fetch(:read_timeout   , 2)
+      @write_timeout   = options.fetch(:write_timeout  , 2)
 
       @socket          = nil
       @pid             = nil
