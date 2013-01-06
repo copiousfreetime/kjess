@@ -292,9 +292,11 @@ describe KJess::Client do
 
   describe "reading for longer than the timeout" do
     it "throws an exception" do
+      q = Queue.new
       t = Thread.new do
         begin
           server = TCPServer.new 65520
+          q.enq :go
           client = server.accept
           Thread.stop
         ensure
@@ -303,6 +305,7 @@ describe KJess::Client do
         end
       end
 
+      q.deq
       c = KJess::Connection.new '127.0.0.1', 65520, :timeout => 0.5
 
       lambda { c.readline }.must_raise KJess::Connection::Timeout
@@ -314,9 +317,11 @@ describe KJess::Client do
 
   describe "writing for longer than the timeout" do
     it "throws an exception" do
+      q = Queue.new
       t = Thread.new do
         begin
           server = TCPServer.new 65520
+          q.enq :go
           client = server.accept
           Thread.stop
         ensure
@@ -324,7 +329,7 @@ describe KJess::Client do
           client.close rescue nil
         end
       end
-
+      q.deq
       c = KJess::Connection.new '127.0.0.1', 65520, :timeout => 0.5
 
       lambda { c.write('a' * 10000000) }.must_raise KJess::Connection::Timeout
