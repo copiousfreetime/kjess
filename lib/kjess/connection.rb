@@ -88,7 +88,7 @@ module KJess
     #
     # Returns a new Socket instance
     def blank_socket
-      sock = ::Socket.new(:INET, :STREAM)
+      sock = ::Socket.new(Socket::AF_INET, Socket::SOCK_STREAM, 0)
 
       # close file descriptors if we exec
       sock.fcntl(Fcntl::F_SETFD, Fcntl::FD_CLOEXEC)
@@ -136,25 +136,25 @@ module KJess
       # Calculate our timeout deadline
       deadline = Time.now.to_f + @connect_timeout
 
-      # Lookup address, we only want          IPv4 , TCP
-      addrs = ::Addrinfo.getaddrinfo(host, port, :INET, :STREAM )
+      # Lookup address, we only want           IPv4 , TCP
+      addrs = ::Socket.getaddrinfo(host, port, ::Socket::AF_INET, ::Socket::SOCK_STREAM )
 
       addrs.each do |addr|
         timeout = deadline - Time.now.to_f
         raise Timeout, "Could not connect to #{host}:#{port}" unless timeout > 0
-
-        sock = blank_socket()
+        sockaddr = ::Socket.pack_sockaddr_in(addr[1], addr[3])
+        sock     = blank_socket()
 
         begin
           begin
-            sock.connect_nonblock( addr.to_sockaddr )
+            sock.connect_nonblock( sockaddr )
           rescue Errno::EINPROGRESS
             if IO.select(nil, [sock], nil, timeout) == nil
               raise Timeout, "Could not connect to #{host}:#{port}"
             end
 
             begin
-              sock.connect_nonblock( addr.to_sockaddr )
+              sock.connect_nonblock( sockaddr )
             rescue Errno::EISCONN
             rescue => ex
               exception = ex
