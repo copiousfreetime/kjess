@@ -7,9 +7,6 @@ end
 gem 'minitest'
 require 'minitest/autorun'
 require 'minitest/pride'
-require "minitest/reporters"
-MiniTest::Reporters.use! MiniTest::Reporters::SpecReporter.new
-#MiniTest::Reporters.use! MiniTest::Reporters::ProgressReporter.new
 require 'kjess'
 require 'utils'
 require 'thread'
