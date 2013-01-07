@@ -10,6 +10,19 @@ describe KJess::Client do
     KJess::Spec.reset_server( @client )
   end
 
+  describe "#initialize" do
+    it "can set keepalive parameters" do
+      client = KJess::Client.new(  :port => KJess::Spec.memcache_port,
+                                   :keepalive_active   => true,
+                                   :keepalive_interval => 1,
+                                   :keepalive_idle     => 900,
+                                   :keepalive_count    => 42)
+      client.connection.keepalive_interval.must_equal 1
+      client.connection.keepalive_idle.must_equal     900
+      client.connection.keepalive_count.must_equal    42
+    end
+  end
+
   describe "connection" do
     it "knows if it is connected" do
       @client.ping

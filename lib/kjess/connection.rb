@@ -30,6 +30,47 @@ module KJess
     # The timeout for writing in seconds. Defaults to 2
     attr_accessor :write_timeout
 
+    # Internal
+    #
+    # Used for setting TCP_KEEPIDLE: overrides tcp_keepalive_time for a single
+    # socket.
+    #
+    # http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html
+    #
+    # tcp_keepalive_time:
+    #
+    #  The interval between the last data packet sent (simple ACKs are not
+    #  considered data) and the first keepalive probe; after the connection is
+    #  marked to need keepalive, this counter is not used any further.
+    attr_reader :keepalive_idle
+
+    # Internal
+    #
+    # Used for setting TCP_KEEPINTVL: overrides tcp_keepalive_intvl for a single
+    # socket.
+    #
+    # http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html
+    #
+    # tcp_keepalive_intvl:
+    #
+    #   The interval between subsequential keepalive probes, regardless of what
+    #   the connection has exchanged in the meantime.
+    attr_reader :keepalive_interval
+
+    # Internal
+    #
+    # Used for setting TCP_KEEPCNT: overrides tcp_keepalive_probes for a single
+    # socket.
+    #
+    # http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html
+    #
+    # tcp_keepalive_probes:
+    #
+    #   The number of unacknowledged probes to send before considering the
+    #   connection dead and notifying the application layer.
+    attr_reader :keepalive_count
+
+
     # TODO: make port an option at next major version number change
     def initialize( host, port = 22133, options = {} )
       if port.is_a?(Hash)
@@ -45,9 +86,9 @@ module KJess
       @write_timeout   = options.fetch(:write_timeout  , 2)
 
       @keepalive_active   = options.fetch(:keepalive_active, true)
-      @keepalive_time     = options.fetch(:keepalive_time    , 60)
+      @keepalive_idle     = options.fetch(:keepalive_idle    , 60)
       @keepalive_interval = options.fetch(:keepalive_interval, 30)
-      @keepalive_probes   = options.fetch(:keepalive_probes,    5)
+      @keepalive_count    = options.fetch(:keepalive_count,    5)
 
       @socket          = nil
       @pid             = nil
