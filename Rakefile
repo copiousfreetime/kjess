@@ -191,7 +191,7 @@ This.gemspec['ruby'] = Gem::Specification.new do |spec|
 
   # The Development Dependencies
   spec.add_development_dependency( 'rake'     , '~> 10.0.3')
-  spec.add_development_dependency( 'minitest' , '~> 4.3.3' )
+  spec.add_development_dependency( 'minitest' , '~> 4.4.0' )
   spec.add_development_dependency( 'rdoc'     , '~> 3.12'  )
   spec.add_development_dependency( 'zip'      , '~> 2.0.2' )
   spec.add_development_dependency( 'json'     , '~> 1.7.6' )
