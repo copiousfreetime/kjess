@@ -188,8 +188,6 @@ This.gemspec['ruby'] = Gem::Specification.new do |spec|
                         "--markup", "tomdoc" ]
 
   # The Runtime Dependencies
-  # FIXME
-  # spec.add_dependency( 'map', '~> 6.2.0')
 
   # The Development Dependencies
   spec.add_development_dependency( 'rake'     , '~> 10.0.3')

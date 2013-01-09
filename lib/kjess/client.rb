@@ -30,7 +30,7 @@ module KJess
       @port        = merged[:port]
       @admin_port  = merged[:admin_port]
       @stats_cache = StatsCache.new( self, merged[:stats_cache_expiration] )
-      @connection = KJess::Connection.new( host, port, merged )
+      @connection  = KJess::Connection.new( host, port, merged )
     end
 
     # Public: Disconnect from the Kestrel server
