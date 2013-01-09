@@ -98,7 +98,7 @@ module KJess
       g    = KJess::Request::Get.new( opts )
 
       if opts[:wait_for]
-        wait_for_in_seconds = opts[:wait_for] / 1000
+        wait_for_in_seconds = Float(opts[:wait_for]) / 1000.0
       else
         wait_for_in_seconds = 0.1
       end
