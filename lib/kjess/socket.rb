@@ -8,7 +8,7 @@ module KJess
 
     # Internal:
     # The timeout for reading in seconds. Defaults to 2
-    attr_reader :read_timeout
+    attr_accessor :read_timeout
 
     # Internal:
     # The timeout for connecting in seconds. Defaults to 2

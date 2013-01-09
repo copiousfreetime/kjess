@@ -76,7 +76,8 @@ module KJess
     #
     # Returns nothing
     def with_additional_read_timeout(additional_timeout, &block)
-      old_read_timeout, @read_timeout = read_timeout, read_timeout + additional_timeout
+      old_read_timeout = socket.read_timeout
+      socket.read_timeout += additional_timeout
       block.call
     ensure
       @read_timeout = old_read_timeout
