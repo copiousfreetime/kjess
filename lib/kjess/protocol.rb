@@ -1,5 +1,5 @@
 module KJess
-  # Protocl is the base class that all Kestrel requests and responses are
+  # Protocol is the base class that all Kestrel requests and responses are
   # developed on. it defines the DSL for creating the Request and Response
   # objects that make up the Protocol.
   #
@@ -14,11 +14,12 @@ module KJess
       #
       # Returns the name
       def keyword( name = nil )
+        @keyword = nil unless defined? @keyword
         if name then
           register( name )
           @keyword = name
         end
-        @keyword
+        @keyword ||= nil
       end
 
       # Internal: define or return the arity of this protocol item

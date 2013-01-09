@@ -192,11 +192,11 @@ This.gemspec['ruby'] = Gem::Specification.new do |spec|
   # spec.add_dependency( 'map', '~> 6.2.0')
 
   # The Development Dependencies
-  spec.add_development_dependency( 'rake'     , '~> 10.0.2')
-  spec.add_development_dependency( 'minitest' , '~> 4.3.2' )
+  spec.add_development_dependency( 'rake'     , '~> 10.0.3')
+  spec.add_development_dependency( 'minitest' , '~> 4.3.3' )
   spec.add_development_dependency( 'rdoc'     , '~> 3.12'  )
   spec.add_development_dependency( 'zip'      , '~> 2.0.2' )
-  spec.add_development_dependency( 'json'     , '~> 1.7.5' )
+  spec.add_development_dependency( 'json'     , '~> 1.7.6' )
 end
 
 
@@ -326,7 +326,7 @@ BEGIN {
     def self.set_coverage_gem
       # list these here instead of gem dependencies since there is not a way to
       # specify ruby version specific dependencies
-      g, v = 'simplecov', '~> 0.6.4'
+      g, v = 'simplecov', '~> 0.7.1'
       if RUBY_VERSION < "1.9.2"
         g, v = 'rcov', '~> 1.0.0'
       end

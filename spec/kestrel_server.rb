@@ -82,7 +82,7 @@ _EOC
       end
 
       def get_response( path )
-        uri = URI.parse( "http://localhost:2223/#{path}" )
+        uri = URI.parse( "http://localhost:#{KJess::Spec.admin_port}/#{path}" )
         resp = Net::HTTP.get_response( uri )
         JSON.parse( resp.body )
       end
@@ -102,7 +102,7 @@ _EOC
       def is_running?
         return "pong" == ping
       rescue Exception => e
-        $stderr.puts e
+        #$stderr.puts e
         false
       end
 

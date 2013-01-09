@@ -30,7 +30,7 @@ module KJess
       @port        = merged[:port]
       @admin_port  = merged[:admin_port]
       @stats_cache = StatsCache.new( self, merged[:stats_cache_expiration] )
-      @connection = KJess::Connection.new( host, port )
+      @connection = KJess::Connection.new( host, port, merged )
     end
 
     # Public: Disconnect from the Kestrel server
@@ -96,10 +96,18 @@ module KJess
     def get( queue_name, opts = {} )
       opts = opts.merge( :queue_name => queue_name )
       g    = KJess::Request::Get.new( opts )
-      resp = send_recv( g )
 
-      return resp.data if KJess::Response::Value === resp
-      return nil
+      if opts[:wait_for]
+        wait_for_in_seconds = opts[:wait_for] / 1000
+      else
+        wait_for_in_seconds = 0.1
+      end
+
+      connection.with_additional_read_timeout(wait_for_in_seconds) do
+        resp = send_recv( g )
+        return resp.data if KJess::Response::Value === resp
+        return nil
+      end
     end
 
     # Public: Reserve the next item on the queue
@@ -178,17 +186,27 @@ module KJess
     #
     # Returns true if the queue was flushed.
     def flush( queue_name )
-      req  = KJess::Request::Flush.new( :queue_name => queue_name )
-      resp = send_recv( req )
-      return KJess::Response::End === resp
+      # It can take a long time to flush all of the messages
+      # on a server, so we'll set the read timeout to something
+      # much higher than usual.
+      connection.with_additional_read_timeout(60) do
+        req  = KJess::Request::Flush.new( :queue_name => queue_name )
+        resp = send_recv( req )
+        return KJess::Response::End === resp
+      end
     end
 
     # Public: Remove all items from all queues on the kestrel server
     #
     # Returns true.
     def flush_all
-      resp = send_recv( KJess::Request::FlushAll.new )
-      return KJess::Response::End === resp
+      # It can take a long time to flush all of the messages
+      # on a server, so we'll set the read timeout to something
+      # much higher than usual.
+      connection.with_additional_read_timeout(60) do
+        resp = send_recv( KJess::Request::FlushAll.new )
+        return KJess::Response::End === resp
+      end
     end
 
     # Public: Have Kestrel reload its config.
@@ -217,7 +235,7 @@ module KJess
     #
     # Returns a String.
     def status( update_to = nil )
-      resp = send_recv( KJess::Request::Status.new( update_to ) )
+      resp = send_recv( KJess::Request::Status.new( :update_to => update_to ) )
       raise KJess::Error, "Status command is not supported" if KJess::Response::ClientError === resp
       return resp.message
     end
@@ -238,6 +256,8 @@ module KJess
     # Returns a Hash
     def stats!
       stats       = send_recv( KJess::Request::Stats.new )
+      raise KJess::Error, "Problem receiving stats: #{stats.inspect}" unless KJess::Response::Stats === stats
+
       h           = stats.data
       dump_stats  = send_recv( KJess::Request::DumpStats.new )
       h['queues'] = Hash.new
@@ -255,8 +275,7 @@ module KJess
     def ping
       stats
       true
-    rescue Errno::ECONNREFUSED => e
-      puts e
+    rescue Errno::ECONNREFUSED
       false
     end
 
