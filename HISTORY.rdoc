@@ -1,12 +1,14 @@
 = KJess Changlog
 
-== Version 1.1.0 - 2012-11-28
+== Version 1.1.0 - 2013-01-08
 
-* Allow the setting of the kestrel server processes ports for testing
+* Allow the setting of the kestrel server processes ports for testing (eric)
 * Update development dependencies, new version and missing gems
-* Re-wrap all network errors with KJess Errors
-* Ensure clients are not shared across fork()
-* Enforce boolean return value from KJess::Client#set
+* Re-wrap all network errors with KJess Errors (eric)
+* Ensure clients are not shared across fork() (eric)
+* Enforce boolean return value from KJess::Client#set (eric)
+* Added socket timeout feature (eric)
+* Added support for tcp keepalive
 
 == Version 1.0.0 - 2012-10-31
 
