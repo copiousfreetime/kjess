@@ -275,8 +275,7 @@ module KJess
     def ping
       stats
       true
-    rescue Errno::ECONNREFUSED => e
-      puts e
+    rescue Errno::ECONNREFUSED
       false
     end
 
