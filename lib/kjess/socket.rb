@@ -277,7 +277,7 @@ module KJess
     #
     # returns nothing
     def write( buf )
-      until buf.length == 0
+      until buf.nil? or (buf.length == 0) do
         written = socket.write_nonblock(buf)
         buf = buf[written, buf.length]
       end
