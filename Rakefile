@@ -49,7 +49,7 @@ namespace :develop do
   # Gemfiles are build artifacts
   CLOBBER << FileList['Gemfile*']
 end
-desc "Boostrap development"
+desc "Bootstrap development"
 task :develop => "develop:default"
 
 #------------------------------------------------------------------------------
