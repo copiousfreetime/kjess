@@ -224,6 +224,7 @@ module KJess
     # Returning the socket if it is and raising an Error if it isn't.
     def connect_nonblock_finalize( sock, sockaddr )
       sock.connect_nonblock( sockaddr )
+      return sock
     rescue Errno::EISCONN
       return sock
     rescue => ex
