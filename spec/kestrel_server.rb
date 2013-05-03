@@ -6,7 +6,7 @@ module KJess::Spec
 
     class << self
       def version
-        "2.3.4"
+        "2.4.1"
       end
 
       def dir
@@ -18,7 +18,7 @@ module KJess::Spec
       end
 
       def jar
-        File.join( dir, "kestrel_2.9.1-#{version}.jar" )
+        File.join( dir, "kestrel_2.9.2-#{version}.jar" )
       end
 
       def queue_path
@@ -47,7 +47,9 @@ import net.lag.kestrel.config._
 
 new KestrelConfig {
   listenAddress = "0.0.0.0"
-  memcacheListenPort = 22133
+  memcacheListenPort = #{KJess::Spec.memcache_port}
+  textListenPort = #{KJess::Spec.text_port}
+  thriftListenPort = #{KJess::Spec.thrift_port}
 
   queuePath = "#{KJess::Spec::KestrelServer.queue_path}"
 
@@ -62,7 +64,7 @@ new KestrelConfig {
   default.maxMemorySize = 128.megabytes
   default.maxJournalSize = 1.gigabyte
 
-  admin.httpPort = 2223
+  admin.httpPort = #{KJess::Spec.admin_port}
 
   admin.statsNodes = new StatsConfig {
     reporters = new TimeSeriesCollectorConfig
@@ -80,7 +82,7 @@ _EOC
       end
 
       def get_response( path )
-        uri = URI.parse( "http://localhost:2223/#{path}" )
+        uri = URI.parse( "http://localhost:#{KJess::Spec.admin_port}/#{path}" )
         resp = Net::HTTP.get_response( uri )
         JSON.parse( resp.body )
       end
@@ -100,6 +102,7 @@ _EOC
       def is_running?
         return "pong" == ping
       rescue Exception => e
+        #$stderr.puts e
         false
       end
 
@@ -129,9 +132,9 @@ _EOC
         h = get_response( 'shutdown' )
         return h['response'] == "ok"
       rescue => e
+        $stderr.puts e
         false
       end
     end
-
   end
 end

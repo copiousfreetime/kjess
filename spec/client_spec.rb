@@ -1,13 +1,26 @@
 require 'spec_helper'
 
-#$DEBUG = true 
 describe KJess::Client do
   before do
-    @client = KJess::Client.new
+    @client_version = "2.4.1"
+    @client = KJess::Spec.kjess_client()
   end
 
   after do
     KJess::Spec.reset_server( @client )
+  end
+
+  describe "#initialize" do
+    it "can set keepalive parameters" do
+      client = KJess::Client.new(  :port => KJess::Spec.memcache_port,
+                                   :keepalive_active   => true,
+                                   :keepalive_interval => 1,
+                                   :keepalive_idle     => 900,
+                                   :keepalive_count    => 42)
+      client.connection.keepalive_interval.must_equal 1
+      client.connection.keepalive_idle.must_equal     900
+      client.connection.keepalive_count.must_equal    42
+    end
   end
 
   describe "connection" do
@@ -26,13 +39,13 @@ describe KJess::Client do
 
   describe "#version" do
     it "knows the version of the server" do
-      @client.version.must_equal "2.3.4"
+      @client.version.must_equal @client_version
     end
   end
 
   describe "#stats" do
     it "can see the stats on an empty server" do
-      @client.stats['version'].must_equal '2.3.4'
+      @client.stats['version'].must_equal @client_version
     end
 
     it "sees the stats on a server with queues" do
@@ -64,6 +77,12 @@ describe KJess::Client do
         break if s['curr_items'] == 1
       end
       @client.get( 'set_q_2' ).must_equal 'setspec2'
+    end
+
+    it 'a really long binary item' do
+      binary = (0..255).to_a.pack('c*') * 100
+      @client.set 'set_bin_q', binary
+      @client.get('set_bin_q').must_equal binary
     end
   end
 
@@ -253,13 +272,83 @@ describe KJess::Client do
 
   describe "#status" do
     it "returns the server status" do
-      lambda { @client.status }.must_raise KJess::ClientError
+      @client.status.must_equal "UP"
+    end
+
+    it "can change the status" do
+      @client.status( "readonly" ).must_equal "END"
+      @client.status.must_equal "READONLY"
+      @client.status( "up" ).must_equal "END"
+      @client.status.must_equal "UP"
     end
   end
 
   describe "#ping" do
     it "knows if a server is up" do
       @client.ping.must_equal true
+    end
+  end
+
+  describe "connecting to a server on a port that isn't listening" do
+    it "throws an exception" do
+      c = KJess::Connection.new '127.0.0.1', 65521
+      lambda { c.socket }.must_raise KJess::Socket::Error
+    end
+  end
+
+  describe "connecting to a server that isn't responding" do
+    it "throws an exception" do
+      c = KJess::Connection.new '127.1.1.1', 65521, :timeout => 0.5
+      lambda { c.socket }.must_raise KJess::Socket::Timeout
+    end
+  end
+
+  describe "reading for longer than the timeout" do
+    it "throws an exception" do
+      q = Queue.new
+      t = Thread.new do
+        begin
+          server = TCPServer.new 65520
+          q.enq :go
+          client = server.accept
+          Thread.stop
+        ensure
+          server.close rescue nil
+          client.close rescue nil
+        end
+      end
+
+      q.deq
+      c = KJess::Connection.new '127.0.0.1', 65520, :timeout => 0.5
+
+      lambda { c.readline }.must_raise KJess::Socket::Timeout
+
+      t.run
+      t.join
+    end
+  end
+
+  describe "writing for longer than the timeout" do
+    it "throws an exception" do
+      q = Queue.new
+      t = Thread.new do
+        begin
+          server = TCPServer.new 65520
+          q.enq :go
+          client = server.accept
+          Thread.stop
+        ensure
+          server.close rescue nil
+          client.close rescue nil
+        end
+      end
+      q.deq
+      c = KJess::Connection.new '127.0.0.1', 65520, :timeout => 0.5
+
+      lambda { c.write('a' * 10000000) }.must_raise KJess::Socket::Timeout
+
+      t.run
+      t.join
     end
   end
 end

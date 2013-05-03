@@ -1,8 +1,15 @@
 require 'spec_helper'
 
+module KJess::Spec
+  class BadRequest < KJess::Request
+    keyword 'BADREQUEST'
+    arity   1
+  end
+end
+
 describe KJess::ClientError do
   before do
-    @client = KJess::Client.new
+    @client = KJess::Spec.kjess_client()
   end
 
   after do
@@ -10,7 +17,7 @@ describe KJess::ClientError do
   end
 
   it "raises a client error if we send an invalid command" do
-    lambda { @client.send_recv( KJess::Request::Status.new ) }.must_raise KJess::ClientError
+    lambda { @client.send_recv( KJess::Spec::BadRequest.new ) }.must_raise KJess::ClientError
   end
 end
 

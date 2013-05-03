@@ -36,10 +36,12 @@ lib/kjess/response/not_stored.rb
 lib/kjess/response/reloaded_config.rb
 lib/kjess/response/server_error.rb
 lib/kjess/response/stats.rb
+lib/kjess/response/status.rb
 lib/kjess/response/stored.rb
 lib/kjess/response/unknown.rb
 lib/kjess/response/value.rb
 lib/kjess/response/version.rb
+lib/kjess/socket.rb
 lib/kjess/stats_cache.rb
 spec/client_spec.rb
 spec/kestrel_server.rb
