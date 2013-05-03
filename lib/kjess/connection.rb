@@ -9,6 +9,17 @@ module KJess
   class Connection
     class Error < KJess::Error; end
 
+    # Public: Set a socket factory -- an object responding
+    # to #call(options) that returns a Socket object
+    def self.socket_factory=(factory)
+      @socket_factory = factory
+    end
+
+    # Public: Return a socket factory
+    def self.socket_factory
+      @socket_factory || proc { |options| Socket.connect(@options) }
+    end
+
     # Public: The hostname/ip address to connect to.
     def host
       socket.host
@@ -95,7 +106,7 @@ module KJess
     def socket
       close if @pid && @pid != Process.pid
       return @socket if @socket and not @socket.closed?
-      @socket      = Socket.connect( @options )
+      @socket      = self.class.socket_factory.call(@options)
       @pid         = Process.pid
       @read_buffer = ''
       return @socket
