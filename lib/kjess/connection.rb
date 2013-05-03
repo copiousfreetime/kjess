@@ -11,12 +11,12 @@ module KJess
 
     # Public: The hostname/ip address to connect to.
     def host
-      socket.host
+      @options[:host]
     end
 
     # Public: The port number to connect to. Default 22133
     def port
-      socket.port
+      @options[:port]
     end
 
     # Public: The timeout for connecting in seconds. Defaults to 2
@@ -99,6 +99,8 @@ module KJess
       @pid         = Process.pid
       @read_buffer = ''
       return @socket
+    rescue => e
+      raise Error, "Could not connect to #{host}:#{port}: #{e.class}: #{e.message}", e.backtrace
     end
 
     # Internal: close the socket if it is not already closed
@@ -130,6 +132,9 @@ module KJess
     rescue KJess::Error
       close
       raise
+    rescue => e
+      close
+      raise Error, "Could not write to #{host}:#{port}: #{e.class}: #{e.message}", e.backtrace
     end
 
     # Internal: read a single line from the socket
@@ -176,6 +181,9 @@ module KJess
     rescue KJess::Error
       close
       raise
+    rescue => e
+      close
+      raise Error, "Could not read from #{host}:#{port}: #{e.class}: #{e.message}", e.backtrace
     end
   end
 end
