@@ -21,7 +21,7 @@ module KJess
     # Internal:
     # The host this socket is connected to
     attr_reader :host
-    
+
     # Internal:
     # The port this socket is connected to
     attr_reader :port
@@ -98,7 +98,7 @@ module KJess
     end
 
     # Internal: Low level socket allocation and option configuration
-    # 
+    #
     # Using the options from the initializer, a new ::Socket is created that
     # is:
     #
@@ -167,12 +167,12 @@ module KJess
       conn_error = lambda { raise errors.first }
       sock       = nil
 
-      addrs.find( conn_error ) do |addr| 
+      addrs.find( conn_error ) do |addr|
         sock = connect_or_error( addr, deadline, errors )
       end
       return sock
     end
-  
+
     # Internal: Connect to the destination or raise an error.
     #
     # Connect to the address or capture the error of the connection
@@ -208,7 +208,7 @@ module KJess
       sock.connect_nonblock( sockaddr )
       return sock
     rescue Errno::EINPROGRESS
-      if IO.select(nil, [sock], nil, timeout).nil? then
+      if !wait_writable(timeout)
         raise Timeout, "Could not connect to #{host}:#{port} within #{timeout} seconds"
       end
       return connect_nonblock_finalize( sock, sockaddr )
@@ -218,7 +218,7 @@ module KJess
 
 
     # Internal: Make sure that a non-blocking connect has truely connected.
-    # 
+    #
     # Ensure that the given socket is actually connected to the given adddress.
     #
     # Returning the socket if it is and raising an Error if it isn't.
@@ -261,7 +261,7 @@ module KJess
     def readpartial(maxlen, outbuf = nil)
       return socket.read_nonblock(maxlen, outbuf)
     rescue Errno::EWOULDBLOCK, Errno::EAGAIN, Errno::ECONNRESET
-      if IO.select([@socket], nil, nil, read_timeout)
+      if wait_readable(read_timeout)
         retry
       else
         raise Timeout, "Could not read from #{host}:#{port} in #{read_timeout} seconds"
@@ -282,11 +282,19 @@ module KJess
         buf = buf[written, buf.length]
       end
     rescue Errno::EWOULDBLOCK, Errno::EINTR, Errno::EAGAIN, Errno::ECONNRESET
-      if IO.select(nil, [socket], nil, write_timeout)
+      if wait_writable(write_timeout)
         retry
       else
         raise Timeout, "Could not write to #{host}:#{port} in #{write_timeout} seconds"
       end
+    end
+
+    def wait_writable(timeout = nil)
+      IO.select(nil, [socket], nil, timeout || write_timeout)
+    end
+
+    def wait_readable(timeout = nil)
+      IO.select([socket], nil, nil, timeout || read_timeout)
     end
   end
 end
