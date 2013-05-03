@@ -208,7 +208,7 @@ module KJess
       sock.connect_nonblock( sockaddr )
       return sock
     rescue Errno::EINPROGRESS
-      if !wait_writable(timeout)
+      if !wait_writable(timeout, sock)
         raise Timeout, "Could not connect to #{host}:#{port} within #{timeout} seconds"
       end
       return connect_nonblock_finalize( sock, sockaddr )
@@ -289,11 +289,11 @@ module KJess
       end
     end
 
-    def wait_writable(timeout = nil)
+    def wait_writable(timeout = nil, socket = @socket)
       IO.select(nil, [socket], nil, timeout || write_timeout)
     end
 
-    def wait_readable(timeout = nil)
+    def wait_readable(timeout = nil, socket = @socket)
       IO.select([socket], nil, nil, timeout || read_timeout)
     end
   end
