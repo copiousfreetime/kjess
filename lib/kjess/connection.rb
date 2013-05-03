@@ -11,12 +11,12 @@ module KJess
 
     # Public: The hostname/ip address to connect to.
     def host
-      socket.host
+      @options[:host]
     end
 
     # Public: The port number to connect to. Default 22133
     def port
-      socket.port
+      @options[:port]
     end
 
     # Public: The timeout for connecting in seconds. Defaults to 2
