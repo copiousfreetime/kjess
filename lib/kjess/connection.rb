@@ -17,7 +17,7 @@ module KJess
 
     # Public: Return a socket factory
     def self.socket_factory
-      @socket_factory || proc { |options| Socket.connect(@options) }
+      @socket_factory || proc { |options| Socket.connect(options) }
     end
 
     # Public: The hostname/ip address to connect to.
