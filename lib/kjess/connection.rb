@@ -9,15 +9,26 @@ module KJess
   class Connection
     class Error < KJess::Error; end
 
-    # Public: Set a socket factory -- an object responding
-    # to #call(options) that returns a Socket object
+    # Public: Set a socket factory
+    #
+    # factory - an object that responds to #call(options) where options is
+    #           a Hash.
+    #
+    # returns nothing
     def self.socket_factory=(factory)
       @socket_factory = factory
     end
 
-    # Public: Return a socket factory
+    # Public: Return the socket factory
+    #
     def self.socket_factory
-      @socket_factory || proc { |options| Socket.connect(@options) }
+      defined?( @socket_factory ) ? @socket_factory : default_socket_factory
+    end
+
+    # Internal: Returns the default socket factory
+    #
+    def self.default_socket_factory
+      lambda { |options| KJess::Socket.connect(options) }
     end
 
     # Public: The hostname/ip address to connect to.
