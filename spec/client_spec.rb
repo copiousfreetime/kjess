@@ -292,14 +292,14 @@ describe KJess::Client do
   describe "connecting to a server on a port that isn't listening" do
     it "throws an exception" do
       c = KJess::Connection.new '127.0.0.1', 65521
-      lambda { c.socket }.must_raise KJess::Socket::Error
+      lambda { c.socket }.must_raise KJess::Connection::Error
     end
   end
 
   describe "connecting to a server that isn't responding" do
     it "throws an exception" do
       c = KJess::Connection.new '127.1.1.1', 65521, :timeout => 0.5
-      lambda { c.socket }.must_raise KJess::Socket::Timeout
+      lambda { c.socket }.must_raise KJess::Connection::Error
     end
   end
 
