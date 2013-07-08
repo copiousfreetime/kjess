@@ -1,5 +1,8 @@
 module KJess
   class Error < ::StandardError; end
-  class ClientError < Error; end
-  class ServerError < Error; end
+  class NetworkError < Error; end
+
+  class ProtocolError < Error; end
+  class ClientError < ProtocolError; end
+  class ServerError < ProtocolError; end
 end

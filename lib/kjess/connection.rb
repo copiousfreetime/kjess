@@ -7,7 +7,7 @@ require 'kjess/socket'
 module KJess
   # Connection
   class Connection
-    class Error < KJess::Error; end
+    class Error < KJess::NetworkError; end
 
     # Public: Set a socket factory
     #
@@ -151,7 +151,7 @@ module KJess
     def write( msg )
       $stderr.puts "--> #{msg}" if $DEBUG
       socket.write( msg )
-    rescue KJess::Error
+    rescue KJess::NetworkError
       close
       raise
     rescue => e
@@ -175,7 +175,7 @@ module KJess
         break unless line.strip.length == 0
       end
       return line
-    rescue KJess::Error
+    rescue KJess::NetworkError
       close
       raise
     rescue EOFError
@@ -200,7 +200,7 @@ module KJess
 
       $stderr.puts "<-- #{result}" if $DEBUG
       return result
-    rescue KJess::Error
+    rescue KJess::NetworkError
       close
       raise
     rescue => e

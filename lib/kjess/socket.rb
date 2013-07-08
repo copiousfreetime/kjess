@@ -3,7 +3,7 @@ require 'socket'
 module KJess
   # Socket: A specialized socket that has been configure
   class Socket
-    class Error < KJess::Error; end
+    class Error < KJess::NetworkError; end
     class Timeout < Error; end
 
     # Internal:

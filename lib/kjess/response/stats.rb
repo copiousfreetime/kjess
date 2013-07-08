@@ -24,7 +24,7 @@ class KJess::Response
         when "END"
           break
         else
-          raise KJess::Error, "Unknown line '#{line.strip}' from STAT command"
+          raise KJess::ClientError, "Unknown line '#{line.strip}' from STAT command"
         end
       end while line = connection.readline
 

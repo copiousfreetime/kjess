@@ -7,7 +7,7 @@ class KJess::Response
     end
 
     def exception
-      raise KJess::Error
+      raise KJess::ClientError
     end
   end
 end

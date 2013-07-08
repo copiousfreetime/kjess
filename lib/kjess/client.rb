@@ -65,7 +65,7 @@ module KJess
       v = KJess::Request::Version.new
       r = send_recv( v )
       return r.version if Response::Version === r
-      raise KJess::Error, "Unexpected Response from VERSION command"
+      raise KJess::ProtocolError, "Unexpected Response from VERSION command"
     end
 
     # Public: Add an item to the given queue
@@ -236,7 +236,7 @@ module KJess
     # Returns a String.
     def status( update_to = nil )
       resp = send_recv( KJess::Request::Status.new( :update_to => update_to ) )
-      raise KJess::Error, "Status command is not supported" if KJess::Response::ClientError === resp
+      raise KJess::ProtocolError, "Status command is not supported" if KJess::Response::ClientError === resp
       return resp.message
     end
 
@@ -256,7 +256,7 @@ module KJess
     # Returns a Hash
     def stats!
       stats       = send_recv( KJess::Request::Stats.new )
-      raise KJess::Error, "Problem receiving stats: #{stats.inspect}" unless KJess::Response::Stats === stats
+      raise KJess::ProtocolError, "Problem receiving stats: #{stats.inspect}" unless KJess::Response::Stats === stats
 
       h           = stats.data
       dump_stats  = send_recv( KJess::Request::DumpStats.new )

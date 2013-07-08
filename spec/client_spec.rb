@@ -128,7 +128,7 @@ describe KJess::Client do
       @client.set( "get_q", "get item 1" )
       @client.set( "get_q", "get item 2" )
       @client.reserve( "get_q" )
-      lambda { @client.get( "get_q" ) }.must_raise KJess::Error
+      lambda { @client.get( "get_q" ) }.must_raise KJess::ClientError
     end
 
   end
