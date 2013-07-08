@@ -1,5 +1,11 @@
 = KJess Changlog
 
+== Version 1.2.0 - 2013-07-08
+
+* Allow for setting a socket factory on the Connection (eric)
+* Connections only raise Connection::Error (eric)
+* Refactor Error hierarchy [#19]
+
 == Version 1.1.0 - 2013-01-08
 
 * Allow the setting of the kestrel server processes ports for testing (eric)
