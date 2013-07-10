@@ -1,19 +1,19 @@
-== KJess
+# KJess
 
-* Homepage[https://github.com/copiousfreetime/kjess/]
-* {Github Project}[https://github.com/copiousfreetime/kjess]
-* email jeremy at hinegardner dot org
+* [Homepage](https://github.com/copiousfreetime/kjess/)
+* [Github Project](https://github.com/copiousfreetime/kjess)
+* email jeremy at copiousfreetime  dot org
 
-== DESCRIPTION
+## DESCRIPTION
 
 KJess is a pure ruby Kestrel client that supports Kestrel's Memcache style
 protocol.
 
-== FEATURES
+## FEATURES
 
 A pure ruby native client to Kestrel.
 
-== Examples
+## Examples
 
     client = Kestrel::Client.new( 'k.example.com' )
     client.set( 'my_queue', 'item' )   # put an 'item' on 'my_queue'
@@ -25,9 +25,9 @@ A pure ruby native client to Kestrel.
     client.close( 'my_queue' )         # confirm with Kestrel that the item
                                        # retrieved was processed
 
-== ISC LICENSE
+## ISC LICENSE
 
-http://opensource.org/licenses/isc-license.txt
+<http://opensource.org/licenses/isc-license.txt>
 
 Copyright (c) 2012 Jeremy Hinegardner
 
