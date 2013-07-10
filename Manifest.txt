@@ -44,6 +44,7 @@ lib/kjess/response/version.rb
 lib/kjess/socket.rb
 lib/kjess/stats_cache.rb
 spec/client_spec.rb
+spec/connection_spec.rb
 spec/kestrel_server.rb
 spec/request/set_spec.rb
 spec/request/version_spec.rb
@@ -52,4 +53,6 @@ spec/response/client_error_spec.rb
 spec/spec_helper.rb
 spec/utils.rb
 spec/version_spec.rb
+tasks/default.rake
 tasks/kestrel.rake
+tasks/this.rb
