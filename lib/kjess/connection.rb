@@ -22,7 +22,8 @@ module KJess
     # Public: Return the socket factory
     #
     def self.socket_factory
-      defined?( @socket_factory ) ? @socket_factory : default_socket_factory
+      @socket_factory ||= nil
+      @socket_factory.respond_to?(:call) ? @socket_factory : default_socket_factory
     end
 
     # Internal: Returns the default socket factory
