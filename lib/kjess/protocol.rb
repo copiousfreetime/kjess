@@ -6,6 +6,7 @@ module KJess
   class Protocol
 
     CRLF = "\r\n"
+    METADATA_SEPARATOR = "__$$kjess_metadata$$__"
 
     class << self
       # Internal: The keyword that starts this protocol message

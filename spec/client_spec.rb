@@ -67,6 +67,11 @@ describe KJess::Client do
       @client.stats['curr_items'].must_equal 1
     end
 
+    it "retrieves a item with metadata from queue" do
+      @client.set( 'get_q' , "a get item", {:metadata => "metadata of a get item"})
+      @client.get( 'get_q' ).must_equal 'a get item', "metadata of a get item"
+    end
+
     it "a item with an expiration expires" do
       @client.stats['curr_items'].must_equal 0
       @client.set( 'set_q_2', "setspec",  1 )
