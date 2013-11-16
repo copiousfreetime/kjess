@@ -68,15 +68,18 @@ module KJess
       raise KJess::ProtocolError, "Unexpected Response from VERSION command"
     end
 
-    # Public: Add an item to the given queue
+    # Public: Add an item to the given queue with options
     #
     # queue_name - the queue to put an item on
     # item       - the item to put on the queue. #to_s will be called on it.
+    #
+    # options:
     # expiration - The number of seconds from now to expire the item
+    # metadata   - Metadata of the item (properties of the item)
     #
     # Returns true if successful, false otherwise
-    def set( queue_name, item, expiration = 0 )
-      s = KJess::Request::Set.new( :queue_name => queue_name, :data => item, :expiration => expiration )
+    def set( queue_name, item, options = {})
+      s = KJess::Request::Set.new( :queue_name => queue_name, :data => item, :metadata => options[:metadata], :expiration => options[:expiration] )
       resp = send_recv( s )
 
       return KJess::Response::Stored === resp
@@ -105,7 +108,16 @@ module KJess
 
       connection.with_additional_read_timeout(wait_for_in_seconds) do
         resp = send_recv( g )
-        return resp.data if KJess::Response::Value === resp
+        if KJess::Response::Value === resp
+          data = resp.data
+          metadata = nil
+
+          if data.rindex(METADATA_SEPARATOR)
+            data, sep, metadata = data.rpartition(METADATA_SEPARATOR)
+          end
+
+          return data, metadata
+        end
         return nil
       end
     end
