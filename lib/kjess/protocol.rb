@@ -56,15 +56,26 @@ module KJess
     # Returns Array
     def parse_options_to_args( opts ); end
 
+    # Internal: create the array that will be used to generate the protocol
+    # string
+    #
+    # Returns Array
+    def protocol_array
+      a = [ keyword ]
+      if not args.empty? then
+        a << ' '
+        a << args.join(' ')
+      end
+      a << CRLF
+    end
+
     # Internal: Convert the object to its protocol serialized format.
     #
     # This may be overridden in child classes
     #
     # Return a String
     def to_protocol
-      s = keyword
-      s += " #{args.join(' ')}" unless args.empty?
-      s += CRLF
+      protocol_array.join('')
     end
 
     # Internal: return the keyword

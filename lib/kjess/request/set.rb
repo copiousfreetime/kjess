@@ -11,9 +11,10 @@ class KJess::Request
       [ opts[:queue_name], 0, opts[:expiration] || 0 , data.bytesize ]
     end
 
-    def to_protocol
-      s = super
-      s += "#{data}#{CRLF}"
+    def protocol_array
+      a = super
+      a << data
+      a << CRLF
     end
   end
 end
