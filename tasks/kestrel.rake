@@ -1,4 +1,5 @@
 load 'spec/kestrel_server.rb'
+require 'open-uri'
 
 namespace :kestrel do
 
@@ -10,9 +11,10 @@ namespace :kestrel do
     url = ::URI.parse("http://robey.github.com/kestrel/download/kestrel-#{KJess::Spec::KestrelServer.version}.zip")
 
     puts "downloading #{url.to_s} to #{KJess::Spec::KestrelServer.zip} ..."
-    File.open( KJess::Spec::KestrelServer.zip, "wb+") do |f|
-      res = Net::HTTP.get_response( url )
-      f.write( res.body )
+    url.open do |i|
+      File.open( KJess::Spec::KestrelServer.zip, "wb+") do |f|
+        f.write( i.read )
+      end
     end
   end
 
